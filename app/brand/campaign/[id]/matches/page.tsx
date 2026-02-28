@@ -6,14 +6,8 @@ import { useMemo, useState } from "react";
 import { calculateFitScore, matchReasons } from "@/lib/matching";
 import { applySendOffers } from "@/lib/demo-actions";
 import { followerRangeOptions, nicheOptions, platformOptions } from "@/lib/constants";
+import { influencerMatchesFilters } from "@/lib/filtering";
 import { useDemoState } from "@/lib/useDemoState";
-
-const inFollowerRange = (followers: number, range: string) => {
-  if (range === "10-30") return followers >= 10000 && followers <= 30000;
-  if (range === "30-50") return followers > 30000 && followers <= 50000;
-  if (range === "50+") return followers > 50000;
-  return true;
-};
 
 export default function CampaignMatchesPage() {
   const params = useParams<{ id: string }>();
@@ -38,13 +32,14 @@ export default function CampaignMatchesPage() {
     const targetGeo = state.brandProfile?.targetGeo;
 
     return state.influencers
-      .filter((influencer) => {
-        if (platformFilter !== "all" && influencer.platform !== platformFilter) return false;
-        if (tagFilter !== "all" && !influencer.nicheTags.includes(tagFilter)) return false;
-        if (geoFilter !== "all" && influencer.audienceGeoTop !== geoFilter) return false;
-        if (!inFollowerRange(influencer.followers, followerFilter)) return false;
-        return true;
-      })
+      .filter((influencer) =>
+        influencerMatchesFilters(influencer, {
+          platform: platformFilter,
+          tag: tagFilter,
+          geo: geoFilter,
+          followerRange: followerFilter
+        })
+      )
       .map((influencer) => ({
         influencer,
         score: calculateFitScore(campaign, influencer, targetGeo),

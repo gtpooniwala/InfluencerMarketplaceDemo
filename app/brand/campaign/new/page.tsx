@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { nicheOptions, platformOptions } from "@/lib/constants";
 import { appendCampaign } from "@/lib/demo-actions";
@@ -17,8 +17,6 @@ export default function NewCampaignPage() {
   const [tags, setTags] = useState<string[]>(["fitness", "wellness"]);
   const [budget, setBudget] = useState(18000);
   const [timeline, setTimeline] = useState("6 weeks");
-
-  const latestCampaign = useMemo(() => state?.campaigns[state.campaigns.length - 1], [state]);
 
   const toggleArrayValue = (list: string[], value: string) =>
     list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
@@ -160,7 +158,12 @@ export default function NewCampaignPage() {
         brandName={state?.brandProfile?.companyName}
         industry={state?.brandProfile?.industry}
         geo={state?.brandProfile?.targetGeo}
-        campaign={latestCampaign}
+        campaignPreview={{
+          name,
+          objective,
+          budget,
+          platforms
+        }}
       />
     </div>
   );
