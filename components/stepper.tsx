@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { steps } from "@/lib/constants";
+import { resolveCampaignAwareHref } from "@/lib/routes";
 
 const getStepIndex = (pathname: string) => {
   if (pathname.includes("/onboarding")) return 0;
@@ -12,7 +13,11 @@ const getStepIndex = (pathname: string) => {
   return 0;
 };
 
-export const Stepper = () => {
+type StepperProps = {
+  campaignId: string;
+};
+
+export const Stepper = ({ campaignId }: StepperProps) => {
   const pathname = usePathname();
   const activeIndex = getStepIndex(pathname);
 
@@ -20,10 +25,11 @@ export const Stepper = () => {
     <ol className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-card md:grid-cols-4">
       {steps.map((step, index) => {
         const state = index < activeIndex ? "done" : index === activeIndex ? "active" : "todo";
+        const resolvedHref = resolveCampaignAwareHref(step.href, campaignId);
         return (
           <li key={step.label}>
             <Link
-              href={step.href}
+              href={resolvedHref}
               className={`flex items-center gap-3 rounded-xl border px-3 py-2 text-sm transition ${
                 state === "active"
                   ? "border-slateblue bg-blue-50 text-slateblue"

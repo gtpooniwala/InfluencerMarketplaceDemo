@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import { navItems } from "@/lib/constants";
 import { useDemoState } from "@/lib/useDemoState";
 import { Stepper } from "@/components/stepper";
+import { getCampaignIdFromPath, resolveCampaignAwareHref } from "@/lib/routes";
 
 type AppShellProps = {
   children: ReactNode;
@@ -22,7 +23,7 @@ export const AppShell = ({ children }: AppShellProps) => {
   const router = useRouter();
   const { hasState, state, clearState, hydrated } = useDemoState();
 
-  const campaignId = state?.activeCampaignId ?? "demo";
+  const campaignId = getCampaignIdFromPath(pathname) ?? state?.activeCampaignId ?? "demo";
   const isBrandRoute = pathname.startsWith("/brand");
   const breadcrumb = pathname
     .split("/")
@@ -45,7 +46,7 @@ export const AppShell = ({ children }: AppShellProps) => {
           </Link>
           <nav className="hidden items-center gap-1 text-sm md:flex">
             {navItems.map((item) => {
-              const resolvedHref = item.href.includes("/demo/") ? item.href.replace("/demo/", `/${campaignId}/`) : item.href;
+              const resolvedHref = resolveCampaignAwareHref(item.href, campaignId);
               const active = pathname === resolvedHref;
               return (
                 <Link
@@ -73,7 +74,7 @@ export const AppShell = ({ children }: AppShellProps) => {
         {isBrandRoute && (
           <>
             <p className="text-sm text-slate-500">{breadcrumb}</p>
-            <Stepper />
+            <Stepper campaignId={campaignId} />
           </>
         )}
 

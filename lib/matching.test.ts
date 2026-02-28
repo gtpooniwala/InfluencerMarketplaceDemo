@@ -51,4 +51,23 @@ describe("matching", () => {
     expect(reasons.length).toBeGreaterThan(0);
     expect(reasons.length).toBeLessThanOrEqual(3);
   });
+
+  it("boosts score when target geography aligns", () => {
+    const geoSensitiveFit: Influencer = {
+      ...strongFit,
+      nicheTags: ["fitness"],
+      engagementRate: 1.2,
+      estCPM: 30
+    };
+    const aligned = calculateFitScore(campaign, geoSensitiveFit, "United States");
+    const misaligned = calculateFitScore(campaign, geoSensitiveFit, "Canada");
+    expect(aligned).toBeGreaterThan(misaligned);
+  });
+
+  it("clamps score to configured bounds", () => {
+    const floor = calculateFitScore(campaign, { ...weakFit, engagementRate: 0.1 }, "France");
+    const ceiling = calculateFitScore(campaign, { ...strongFit, engagementRate: 20 }, "United States");
+    expect(floor).toBeGreaterThanOrEqual(35);
+    expect(ceiling).toBeLessThanOrEqual(98);
+  });
 });
