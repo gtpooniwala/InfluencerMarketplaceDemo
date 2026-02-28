@@ -1,29 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { FormEvent, useMemo, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { appendOfferMessage, toggleOfferChecklistItem, transitionOfferStatus } from "@/lib/demo-actions";
 import { useDemoState } from "@/lib/useDemoState";
 import { StatusBadge } from "@/components/status-badge";
 import { OfferStatus } from "@/lib/types";
+import { getCampaignForRoute } from "@/lib/campaigns";
 
 export default function CampaignCoordinationPage() {
   const params = useParams<{ id: string }>();
   const campaignId = Array.isArray(params.id) ? params.id[0] : params.id;
   const { state, updateState, hydrated } = useDemoState();
+  const router = useRouter();
 
   const [draftMessages, setDraftMessages] = useState<Record<string, string>>({});
 
-  const campaign = useMemo(
-    () => state?.campaigns.find((item) => item.id === campaignId),
-    [campaignId, state?.campaigns]
-  );
+  const campaign = useMemo(() => {
+    if (!state) return null;
+    return getCampaignForRoute(state, campaignId);
+  }, [campaignId, state]);
 
-  const campaignOffers = useMemo(
-    () => state?.offers.filter((item) => item.campaignId === campaignId) ?? [],
-    [campaignId, state?.offers]
-  );
+
+  useEffect(() => {
+    if (!hydrated || !campaign) return;
+    if (campaign.id === campaignId) return;
+    router.replace(`/brand/campaign/${campaign.id}/coord`);
+  }, [campaign, campaignId, hydrated, router]);
+  const campaignOffers = useMemo(() => {
+    if (!state || !campaign) return [];
+    return state.offers.filter((item) => item.campaignId === campaign.id);
+  }, [campaign, state]);
 
   const updateOffer = (offerId: string, updater: (status: OfferStatus) => OfferStatus) => {
     updateState((prev) => {

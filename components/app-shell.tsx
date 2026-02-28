@@ -7,6 +7,7 @@ import { navItems } from "@/lib/constants";
 import { useDemoState } from "@/lib/useDemoState";
 import { Stepper } from "@/components/stepper";
 import { getCampaignIdFromPath, resolveCampaignAwareHref } from "@/lib/routes";
+import { getActiveOrLatestCampaignId } from "@/lib/campaigns";
 
 type AppShellProps = {
   children: ReactNode;
@@ -23,7 +24,7 @@ export const AppShell = ({ children }: AppShellProps) => {
   const router = useRouter();
   const { hasState, state, clearState, hydrated } = useDemoState();
 
-  const campaignId = getCampaignIdFromPath(pathname) ?? state?.activeCampaignId ?? "demo";
+  const campaignId = getCampaignIdFromPath(pathname) ?? getActiveOrLatestCampaignId(state) ?? "demo";
   const isBrandRoute = pathname.startsWith("/brand");
   const breadcrumb = pathname
     .split("/")

@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { calculateFitScore, matchReasons } from "@/lib/matching";
 import { applySendOffers } from "@/lib/demo-actions";
 import { followerRangeOptions, nicheOptions, platformOptions } from "@/lib/constants";
 import { influencerMatchesFilters } from "@/lib/filtering";
+import { getCampaignForRoute } from "@/lib/campaigns";
 import { useDemoState } from "@/lib/useDemoState";
 
 export default function CampaignMatchesPage() {
@@ -21,11 +22,17 @@ export default function CampaignMatchesPage() {
   const [followerFilter, setFollowerFilter] = useState<string>("all");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  const campaign = useMemo(
-    () => state?.campaigns.find((item) => item.id === campaignId),
-    [campaignId, state?.campaigns]
-  );
+  const campaign = useMemo(() => {
+    if (!state) return null;
+    return getCampaignForRoute(state, campaignId);
+  }, [campaignId, state]);
 
+
+  useEffect(() => {
+    if (!hydrated || !campaign) return;
+    if (campaign.id === campaignId) return;
+    router.replace(`/brand/campaign/${campaign.id}/matches`);
+  }, [campaign, campaignId, hydrated, router]);
   const rankedInfluencers = useMemo(() => {
     if (!state || !campaign) return [];
 
@@ -48,10 +55,10 @@ export default function CampaignMatchesPage() {
       .sort((a, b) => b.score - a.score);
   }, [campaign, followerFilter, geoFilter, platformFilter, state, tagFilter]);
 
-  const existingOffers = useMemo(
-    () => state?.offers.filter((offer) => offer.campaignId === campaignId) ?? [],
-    [campaignId, state?.offers]
-  );
+  const existingOffers = useMemo(() => {
+    if (!state || !campaign) return [];
+    return state.offers.filter((offer) => offer.campaignId === campaign.id);
+  }, [campaign, state]);
 
   const toggleSelected = (id: string) => {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
@@ -196,7 +203,7 @@ export default function CampaignMatchesPage() {
       <section className="demo-card flex flex-wrap items-center justify-between gap-3">
         <span className="text-sm text-slate-600">Step 3 of 4 · Select influencers then send offers.</span>
         <div className="flex gap-2">
-          <button className="btn-secondary" onClick={() => router.push(`/brand/campaign/${campaignId}/coord`)}>
+          <button className="btn-secondary" onClick={() => router.push(`/brand/campaign/${campaign.id}/coord`)}>
             Next: Coordination
           </button>
           <button className="btn-primary" onClick={sendOffers} disabled={selectedIds.length === 0}>
