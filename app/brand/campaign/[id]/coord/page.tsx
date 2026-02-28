@@ -3,17 +3,10 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
-import { createId } from "@/lib/storage";
+import { appendOfferMessage, toggleOfferChecklistItem, transitionOfferStatus } from "@/lib/demo-actions";
 import { useDemoState } from "@/lib/useDemoState";
 import { StatusBadge } from "@/components/status-badge";
 import { OfferStatus } from "@/lib/types";
-
-const influencerSystemMessage = (status: OfferStatus) => {
-  if (status === "Accepted") return "Great fit. I can commit to the timeline and deliverables.";
-  if (status === "Declined") return "Thanks for reaching out. I have a conflicting campaign window.";
-  if (status === "Delivered") return "Deliverables are now submitted for your review.";
-  return "Thanks for the update!";
-};
 
 export default function CampaignCoordinationPage() {
   const params = useParams<{ id: string }>();
@@ -33,75 +26,23 @@ export default function CampaignCoordinationPage() {
   );
 
   const updateOffer = (offerId: string, updater: (status: OfferStatus) => OfferStatus) => {
-    updateState((prev) => ({
-      ...prev,
-      offers: prev.offers.map((offer) => {
-        if (offer.id !== offerId) return offer;
-        const nextStatus = updater(offer.status);
-        return {
-          ...offer,
-          status: nextStatus,
-          messages: [
-            ...offer.messages,
-            {
-              id: createId("msg"),
-              sender: "Influencer",
-              text: influencerSystemMessage(nextStatus),
-              ts: new Date().toISOString()
-            }
-          ]
-        };
-      })
-    }));
+    updateState((prev) => {
+      const target = prev.offers.find((offer) => offer.id === offerId);
+      if (!target) return prev;
+      return transitionOfferStatus(prev, offerId, updater(target.status));
+    });
   };
 
   const sendMessage = (offerId: string, event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const text = draftMessages[offerId]?.trim();
-    if (!text) return;
+    const text = draftMessages[offerId] ?? "";
 
-    updateState((prev) => ({
-      ...prev,
-      offers: prev.offers.map((offer) =>
-        offer.id === offerId
-          ? {
-              ...offer,
-              messages: [
-                ...offer.messages,
-                {
-                  id: createId("msg"),
-                  sender: "Brand",
-                  text,
-                  ts: new Date().toISOString()
-                }
-              ]
-            }
-          : offer
-      )
-    }));
-
+    updateState((prev) => appendOfferMessage(prev, offerId, "Brand", text));
     setDraftMessages((prev) => ({ ...prev, [offerId]: "" }));
   };
 
   const toggleChecklistItem = (offerId: string, checklistId: string) => {
-    updateState((prev) => ({
-      ...prev,
-      offers: prev.offers.map((offer) =>
-        offer.id === offerId
-          ? {
-              ...offer,
-              checklist: offer.checklist.map((item) =>
-                item.id === checklistId
-                  ? {
-                      ...item,
-                      done: !item.done
-                    }
-                  : item
-              )
-            }
-          : offer
-      )
-    }));
+    updateState((prev) => toggleOfferChecklistItem(prev, offerId, checklistId));
   };
 
   if (!hydrated) {

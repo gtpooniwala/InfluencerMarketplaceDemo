@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { calculateFitScore, matchReasons } from "@/lib/matching";
-import { createOfferDraft } from "@/lib/storage";
+import { applySendOffers } from "@/lib/demo-actions";
 import { followerRangeOptions, nicheOptions, platformOptions } from "@/lib/constants";
 import { useDemoState } from "@/lib/useDemoState";
 
@@ -65,43 +65,7 @@ export default function CampaignMatchesPage() {
   const sendOffers = () => {
     if (!campaign || selectedIds.length === 0) return;
 
-    updateState((prev) => {
-      const offers = [...prev.offers];
-
-      for (const influencerId of selectedIds) {
-        const existingIndex = offers.findIndex(
-          (offer) => offer.campaignId === campaign.id && offer.influencerId === influencerId
-        );
-
-        if (existingIndex >= 0) {
-          offers[existingIndex] = {
-            ...offers[existingIndex],
-            status: "Sent"
-          };
-          continue;
-        }
-
-        const influencer = prev.influencers.find((item) => item.id === influencerId);
-        if (!influencer) continue;
-
-        const amount = Math.round((influencer.estCPM * influencer.followers) / 1000);
-        offers.push(createOfferDraft(campaign.id, influencer.id, amount));
-      }
-
-      return {
-        ...prev,
-        campaigns: prev.campaigns.map((item) =>
-          item.id === campaign.id
-            ? {
-                ...item,
-                status: "Active"
-              }
-            : item
-        ),
-        offers,
-        activeCampaignId: campaign.id
-      };
-    });
+    updateState((prev) => applySendOffers(prev, campaign.id, selectedIds));
 
     router.push(`/brand/campaign/${campaign.id}/coord`);
   };
