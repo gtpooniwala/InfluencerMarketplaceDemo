@@ -28,10 +28,13 @@ Hackathon demo web app built with Next.js App Router + Tailwind CSS to simulate 
 Detailed project docs are in [`docs/`](./docs/README.md):
 
 - [Architecture](./docs/ARCHITECTURE.md)
+- [Components and Modules](./docs/COMPONENTS_AND_MODULES.md)
 - [Routes and Demo Flow](./docs/ROUTES_AND_FLOW.md)
 - [Data Model and Local Storage](./docs/DATA_MODEL_AND_STATE.md)
+- [State Transitions](./docs/STATE_TRANSITIONS.md)
 - [Testing Guide](./docs/TESTING.md)
 - [Deployment Runbook](./docs/DEPLOYMENT.md)
+- [Release Checklist](./docs/RELEASE_CHECKLIST.md)
 - [Demo Script](./docs/DEMO_SCRIPT.md)
 - [Troubleshooting](./docs/TROUBLESHOOTING.md)
 - [Contributing](./docs/CONTRIBUTING.md)
