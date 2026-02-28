@@ -60,6 +60,26 @@ npm start
 
 The app binds to `0.0.0.0` and uses `$PORT` (default `8080`).
 
+## Run The Built App With Docker
+
+Use Docker Compose to build and run the same production container image:
+
+```bash
+docker compose up --build
+```
+
+Open:
+
+```text
+http://localhost:8080
+```
+
+Stop:
+
+```bash
+docker compose down
+```
+
 ## Cloud Run Deployment (Source Deploy)
 
 1. Authenticate and select project:
@@ -94,4 +114,11 @@ Build + deploy with your own image if preferred:
 ```bash
 gcloud builds submit --tag REGION-docker.pkg.dev/PROJECT_ID/REPO_NAME/influencer-marketplace-demo:latest
 gcloud run deploy SERVICE_NAME --image REGION-docker.pkg.dev/PROJECT_ID/REPO_NAME/influencer-marketplace-demo:latest --region REGION --allow-unauthenticated
+```
+
+Or run the provided Cloud Build pipeline:
+
+```bash
+gcloud builds submit --config cloudbuild.yaml \
+  --substitutions=_SERVICE_NAME=SERVICE_NAME,_REGION=REGION,_IMAGE=REGION-docker.pkg.dev/PROJECT_ID/REPO_NAME/influencer-marketplace-demo:latest
 ```
