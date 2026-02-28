@@ -51,6 +51,13 @@ Run unit tests with:
 npm test
 ```
 
+Run end-to-end flow tests (landing -> onboarding -> campaign -> matches -> coordination):
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
 ## Production Build
 
 ```bash

@@ -43,6 +43,26 @@ describe("demo actions", () => {
     expect(result.state.activeCampaignId).toBe(result.campaignId);
   });
 
+  it("uses caller-provided campaign id when supplied", () => {
+    const state = createEmptyState();
+    const result = appendCampaign(
+      state,
+      {
+        name: "Pinned Campaign",
+        objective: "Stable routing id",
+        platforms: ["TikTok"],
+        nicheTags: ["fitness"],
+        budget: 4000,
+        timeline: "2 weeks"
+      },
+      "cmp-fixed"
+    );
+
+    expect(result.campaignId).toBe("cmp-fixed");
+    expect(result.state.activeCampaignId).toBe("cmp-fixed");
+    expect(result.state.campaigns[0].id).toBe("cmp-fixed");
+  });
+
   it("creates offers and does not duplicate existing campaign+influencer offers", () => {
     const state = withCampaign();
     const firstPass = applySendOffers(state, "cmp-1", ["inf-001", "inf-002"]);

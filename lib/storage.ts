@@ -1,6 +1,7 @@
 import { DemoAppState, Influencer, Message, Offer } from "@/lib/types";
 
 export const STORAGE_KEY = "demoAppState";
+export const DEMO_STATE_EVENT = "demo-state-updated";
 
 const defaultDeliverables = ["1x TikTok Post", "1x IG Story", "1x Link in bio"];
 
@@ -363,11 +364,13 @@ export const loadState = (): DemoAppState | null => {
 export const saveState = (state: DemoAppState): void => {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  window.dispatchEvent(new Event(DEMO_STATE_EVENT));
 };
 
 export const resetState = (): void => {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(STORAGE_KEY);
+  window.dispatchEvent(new Event(DEMO_STATE_EVENT));
 };
 
 export const ensureState = (): DemoAppState => {

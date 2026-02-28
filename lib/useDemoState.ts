@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { createEmptyState, loadState, resetState, saveState } from "@/lib/storage";
+import { createEmptyState, DEMO_STATE_EVENT, loadState, resetState, saveState } from "@/lib/storage";
 import { DemoAppState } from "@/lib/types";
 
 type Updater = DemoAppState | ((prev: DemoAppState) => DemoAppState);
@@ -11,8 +11,20 @@ export const useDemoState = () => {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setState(loadState());
+    const refresh = () => {
+      setState(loadState());
+    };
+
+    refresh();
     setHydrated(true);
+
+    window.addEventListener(DEMO_STATE_EVENT, refresh);
+    window.addEventListener("storage", refresh);
+
+    return () => {
+      window.removeEventListener(DEMO_STATE_EVENT, refresh);
+      window.removeEventListener("storage", refresh);
+    };
   }, []);
 
   const updateState = useCallback((updater: Updater) => {

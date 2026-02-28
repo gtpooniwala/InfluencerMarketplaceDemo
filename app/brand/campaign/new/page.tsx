@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { nicheOptions, platformOptions } from "@/lib/constants";
 import { appendCampaign } from "@/lib/demo-actions";
+import { createId } from "@/lib/storage";
 import { SummaryCard } from "@/components/summary-card";
 import { useDemoState } from "@/lib/useDemoState";
 
@@ -25,24 +26,24 @@ export default function NewCampaignPage() {
     event.preventDefault();
     if (!name.trim() || platforms.length === 0 || tags.length === 0) return;
 
-    let nextCampaignId = "";
+    const nextCampaignId = createId("cmp");
 
     updateState((prev) => {
-      const result = appendCampaign(prev, {
-        name: name.trim(),
-        objective: objective.trim(),
-        platforms,
-        nicheTags: tags,
-        budget,
-        timeline
-      });
-      nextCampaignId = result.campaignId;
-      return result.state;
+      return appendCampaign(
+        prev,
+        {
+          name: name.trim(),
+          objective: objective.trim(),
+          platforms,
+          nicheTags: tags,
+          budget,
+          timeline
+        },
+        nextCampaignId
+      ).state;
     });
 
-    if (nextCampaignId) {
-      router.push(`/brand/campaign/${nextCampaignId}/matches`);
-    }
+    router.push(`/brand/campaign/${nextCampaignId}/matches`);
   };
 
   return (

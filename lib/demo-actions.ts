@@ -12,11 +12,11 @@ export type CampaignDraftInput = {
 
 export const appendCampaign = (
   state: DemoAppState,
-  draft: CampaignDraftInput
+  draft: CampaignDraftInput,
+  campaignId: string = createId("cmp")
 ): { campaignId: string; state: DemoAppState } => {
-  const id = createId("cmp");
   const campaign: Campaign = {
-    id,
+    id: campaignId,
     name: draft.name,
     objective: draft.objective,
     platforms: draft.platforms,
@@ -26,11 +26,11 @@ export const appendCampaign = (
     status: "Draft"
   };
   return {
-    campaignId: id,
+    campaignId,
     state: {
       ...state,
       campaigns: [...state.campaigns, campaign],
-      activeCampaignId: id
+      activeCampaignId: campaignId
     }
   };
 };
