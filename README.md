@@ -23,6 +23,16 @@ Hackathon demo web app built with Next.js App Router + Tailwind CSS to simulate 
 - Tailwind CSS
 - LocalStorage persistence only (no backend, no auth, no external APIs)
 
+## Documentation
+
+Detailed project docs are in [`docs/`](./docs/README.md):
+
+- [Architecture](./docs/ARCHITECTURE.md)
+- [Routes and Demo Flow](./docs/ROUTES_AND_FLOW.md)
+- [Data Model and Local Storage](./docs/DATA_MODEL_AND_STATE.md)
+- [Testing Guide](./docs/TESTING.md)
+- [Deployment Runbook](./docs/DEPLOYMENT.md)
+
 ## Local Development
 
 1. Install dependencies:
