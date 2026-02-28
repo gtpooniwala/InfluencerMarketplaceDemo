@@ -9,3 +9,6 @@ Use this folder for implementation and operations details beyond the root README
 - [Data Model and Local Storage](./DATA_MODEL_AND_STATE.md)
 - [Testing Guide](./TESTING.md)
 - [Deployment Runbook](./DEPLOYMENT.md)
+- [Demo Script](./DEMO_SCRIPT.md)
+- [Troubleshooting](./TROUBLESHOOTING.md)
+- [Contributing](./CONTRIBUTING.md)

@@ -32,6 +32,9 @@ Detailed project docs are in [`docs/`](./docs/README.md):
 - [Data Model and Local Storage](./docs/DATA_MODEL_AND_STATE.md)
 - [Testing Guide](./docs/TESTING.md)
 - [Deployment Runbook](./docs/DEPLOYMENT.md)
+- [Demo Script](./docs/DEMO_SCRIPT.md)
+- [Troubleshooting](./docs/TROUBLESHOOTING.md)
+- [Contributing](./docs/CONTRIBUTING.md)
 
 ## Local Development
 
