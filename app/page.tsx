@@ -26,7 +26,7 @@ export default function LandingPage() {
           <Link href="/brand/onboarding" className="btn-primary px-6 py-3 text-base">
             Start campaign
           </Link>
-          <Link href="/campaign/new" className="btn-secondary px-6 py-3 text-base">
+          <Link href="/brand/onboarding" className="btn-secondary px-6 py-3 text-base">
             Get a demo
           </Link>
         </div>

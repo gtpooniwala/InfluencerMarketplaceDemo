@@ -33,10 +33,17 @@ export type BrandMemory = {
 
 export type BrandBrief = {
   summary: string;
+  category: string;
+  subcategory: string;
+  productFocus: string;
+  priceTier: string;
+  positioningStatement: string;
   toneTags: string[];
   primaryCustomer: string;
   geography: string;
+  targetSegments: string[];
   keyClaims: string[];
+  messagingPillars: string[];
   doGuidelines: string[];
   dontGuidelines: string[];
 };
@@ -171,7 +178,7 @@ export const brandMemory: BrandMemory = {
   brandName: "Bamboo Bump",
   website: "https://bamboobump.co.uk",
   positioning: "Playful",
-  assets: ["logo.svg", "product-flatlay.jpg", "ugc-style-guide.pdf"]
+  assets: ["logo.svg", "product-packshot-01.jpg", "retail-line-sheet.pdf", "recent-content-examples.zip"]
 };
 
 export const sampleContext = {
@@ -216,20 +223,38 @@ const positioningToneMap: Record<Positioning, string[]> = {
   Bold: ["Expressive", "High-energy", "Attention-grabbing"]
 };
 
-export const buildBrandBrief = (memory: BrandMemory): BrandBrief => {
+export const buildBrandBrief = (memory: BrandMemory, extraSummary?: string): BrandBrief => {
   const toneTags = positioningToneMap[memory.positioning];
 
   return {
     summary:
-      `${memory.brandName} is a comfort-first maternitywear brand focused on helping mothers feel confident in daily life. ` +
-      `The strongest brand territory is practical comfort with authentic social proof, making micro-influencer storytelling a high-fit channel.`,
+      extraSummary && extraSummary.trim().length > 0
+        ? extraSummary.trim()
+        : `${memory.brandName} is a comfort-first maternitywear brand focused on helping mothers feel confident in daily life. ` +
+          `The strongest brand territory is practical comfort with authentic social proof, making micro-influencer storytelling a high-fit channel.`,
+    category: "Apparel",
+    subcategory: "Maternity and postpartum comfortwear",
+    productFocus: "Bamboo maternity leggings and stretch essentials",
+    priceTier: "Mid-premium",
+    positioningStatement:
+      "Everyday confidence and comfort for mothers, delivered through practical, body-positive creator storytelling.",
     toneTags,
     primaryCustomer: "Mothers aged 24-38 balancing work, home, and convenience-led shopping.",
     geography: "United Kingdom (priority), with expansion to Ireland in follow-up cycles.",
+    targetSegments: [
+      "Expecting mothers in second/third trimester",
+      "Postpartum mothers seeking comfort-first wardrobe staples",
+      "Style-conscious parents buying via social proof"
+    ],
     keyClaims: [
       "Soft bamboo fabric with all-day stretch",
       "Designed for maternity and postpartum comfort",
       "Easy styling for routine-heavy days"
+    ],
+    messagingPillars: [
+      "Comfort you can feel in real-life movement",
+      "Confidence-led fit across pregnancy and postpartum",
+      "Practical everyday styling with clear value"
     ],
     doGuidelines: [
       "Show real-life movement and everyday context",

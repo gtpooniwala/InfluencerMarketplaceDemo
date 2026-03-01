@@ -6,8 +6,8 @@ test("judge click-through: start to campaign dashboard", async ({ page }) => {
   await page.getByRole("link", { name: "Start campaign" }).click();
   await expect(page).toHaveURL(/\/brand\/onboarding$/);
 
-  await page.getByRole("button", { name: "Generate brand brief" }).click();
-  await expect(page.getByRole("heading", { name: "Brand Brief" })).toBeVisible();
+  await page.getByRole("button", { name: "Generate profile" }).click();
+  await expect(page.getByRole("heading", { name: "Brand Profile" })).toBeVisible();
   await page.getByRole("button", { name: "Continue to campaign" }).click();
 
   await expect(page).toHaveURL(/\/campaign\/new$/);

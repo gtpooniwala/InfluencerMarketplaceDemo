@@ -5,7 +5,13 @@ import { useRouter } from "next/navigation";
 import { InterpretationBox } from "@/components/InterpretationBox";
 import { useToast } from "@/components/toast-provider";
 import { useDemoFlowStore } from "@/lib/demoFlowStore";
-import { Positioning, buildBrandBrief, positioningOptions } from "@/lib/mockData";
+import { buildBrandBrief } from "@/lib/mockData";
+
+const parseLines = (value: string) =>
+  value
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
 
 export default function BrandOnboardingPage() {
   const router = useRouter();
@@ -14,16 +20,26 @@ export default function BrandOnboardingPage() {
 
   const [brandName, setBrandName] = useState("Bamboo Bump");
   const [website, setWebsite] = useState("https://bamboobump.co.uk");
-  const [positioning, setPositioning] = useState<Positioning>("Playful");
-  const [assets, setAssets] = useState<string[]>(["logo.svg", "product-front.jpg"]);
+  const [assets, setAssets] = useState<string[]>([
+    "logo.svg",
+    "product-packshot-01.jpg",
+    "retail-line-sheet.pdf",
+    "recent-content-examples.zip"
+  ]);
+  const [brandSummary, setBrandSummary] = useState("");
+  const [builderCollapsed, setBuilderCollapsed] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     if (!hydrated) return;
     setBrandName(state.brandMemory.brandName);
     setWebsite(state.brandMemory.website ?? "");
-    setPositioning(state.brandMemory.positioning);
     setAssets(state.brandMemory.assets);
-  }, [hydrated, state.brandMemory]);
+    if (state.brandBrief) {
+      setShowProfile(true);
+      setBuilderCollapsed(true);
+    }
+  }, [hydrated, state.brandBrief, state.brandMemory]);
 
   const addAsset = (asset: string) => {
     if (assets.includes(asset)) return;
@@ -31,150 +47,247 @@ export default function BrandOnboardingPage() {
     pushToast(`${asset} attached.`);
   };
 
-  const handleGenerate = () => {
-    const nextMemory = { brandName, website: website || undefined, positioning, assets };
+  const buildMemory = () => ({
+    brandName,
+    website: website || undefined,
+    positioning: state.brandMemory.positioning,
+    assets
+  });
+
+  const handleGenerateProfile = () => {
+    const nextMemory = buildMemory();
     setDemoState((prev) => ({
       ...prev,
       brandMemory: nextMemory,
-      brandBrief: buildBrandBrief(nextMemory)
+      brandBrief: buildBrandBrief(nextMemory, brandSummary)
     }));
-    pushToast("Brand brief generated.");
+    setShowProfile(true);
+    setBuilderCollapsed(true);
+    pushToast("Brand profile generated.");
+  };
+
+  const handleViewEditProfile = () => {
+    const nextMemory = buildMemory();
+    setDemoState((prev) => ({
+      ...prev,
+      brandMemory: nextMemory,
+      brandBrief: prev.brandBrief ?? buildBrandBrief(nextMemory, brandSummary)
+    }));
+    setShowProfile(true);
+    setBuilderCollapsed(true);
+    pushToast("Brand profile opened for editing.");
+  };
+
+  const updateBrief = <K extends keyof NonNullable<typeof state.brandBrief>>(field: K, value: NonNullable<typeof state.brandBrief>[K]) => {
+    setDemoState((prev) => {
+      if (!prev.brandBrief) return prev;
+      return {
+        ...prev,
+        brandBrief: {
+          ...prev.brandBrief,
+          [field]: value
+        }
+      };
+    });
   };
 
   return (
     <div className="space-y-6">
       <section className="demo-card space-y-4">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-ink">Brand Brief Builder</h1>
-          <p className="mt-2 text-sm text-slate-600">Start from your existing brand assets. Let the operator draft the brief for you.</p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight text-ink">Brand Brief Builder</h1>
+            <p className="mt-2 text-sm text-slate-600">
+              Upload context or paste a summary. Generate a full brand profile, then edit it below.
+            </p>
+          </div>
+          {showProfile && (
+            <button type="button" className="btn-secondary" onClick={() => setBuilderCollapsed((prev) => !prev)}>
+              {builderCollapsed ? "Expand builder" : "Collapse builder"}
+            </button>
+          )}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="label" htmlFor="website">
-              Website URL
-            </label>
-            <input id="website" className="input" value={website} onChange={(e) => setWebsite(e.target.value)} />
-          </div>
+        {!builderCollapsed && (
+          <div className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="label" htmlFor="website">
+                  Website URL
+                </label>
+                <input id="website" className="input" value={website} onChange={(e) => setWebsite(e.target.value)} />
+              </div>
 
-          <div>
-            <label className="label" htmlFor="brandName">
-              Brand name
-            </label>
-            <input id="brandName" className="input" value={brandName} onChange={(e) => setBrandName(e.target.value)} />
-          </div>
-        </div>
+              <div>
+                <label className="label" htmlFor="brandName">
+                  Brand name
+                </label>
+                <input id="brandName" className="input" value={brandName} onChange={(e) => setBrandName(e.target.value)} />
+              </div>
+            </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="label" htmlFor="positioning">
-              Positioning
-            </label>
-            <select id="positioning" className="input" value={positioning} onChange={(e) => setPositioning(e.target.value as Positioning)}>
-              {positioningOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+            <div>
+              <label className="label" htmlFor="summary">
+                Brand summary (optional)
+              </label>
+              <textarea
+                id="summary"
+                className="input min-h-20"
+                value={brandSummary}
+                onChange={(e) => setBrandSummary(e.target.value)}
+                placeholder="Paste internal notes, campaign goals, or positioning summary"
+              />
+            </div>
 
-          <div>
-            <span className="label">Upload brand assets</span>
-            <div className="flex flex-wrap gap-2">
-              {["logo.svg", "product-hero.jpg", "campaign-pack.pdf", "ugc-guide.pdf"].map((asset) => (
-                <button key={asset} type="button" className="btn-secondary" onClick={() => addAsset(asset)}>
-                  {asset}
-                </button>
-              ))}
+            <div>
+              <span className="label">Sample files already uploaded</span>
+              <div className="flex flex-wrap gap-2">
+                {assets.map((asset) => (
+                  <span key={asset} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-700">
+                    {asset}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {["packaging-guide.pdf", "new-product-angles.pptx", "founder-notes.txt"].map((asset) => (
+                  <button key={asset} type="button" className="btn-secondary" onClick={() => addAsset(asset)}>
+                    Add {asset}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-3 border-t border-slate-100 pt-4">
+              <button type="button" className="btn-primary px-6 py-2.5" onClick={handleGenerateProfile}>
+                Generate profile
+              </button>
+              <button type="button" className="btn-secondary px-6 py-2.5" onClick={handleViewEditProfile}>
+                View / edit profile
+              </button>
             </div>
           </div>
-        </div>
-
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-          Attached: {assets.join(", ")}
-        </div>
-
-        <div className="flex justify-center">
-          <button type="button" className="btn-primary px-6 py-2.5" onClick={handleGenerate}>
-            Generate brand brief
-          </button>
-        </div>
+        )}
       </section>
 
-      {state.brandBrief && (
+      {showProfile && state.brandBrief && (
         <section className="demo-card space-y-4">
           <div>
-            <h2 className="text-xl font-semibold text-ink">Brand Brief</h2>
-            <p className="mt-1 text-sm text-slate-600">AI-generated from your site + assets. Edit anything.</p>
+            <h2 className="text-xl font-semibold text-ink">Brand Profile</h2>
+            <p className="mt-1 text-sm text-slate-600">AI-generated from your site + files. Edit any field before continuing.</p>
           </div>
 
-          <p className="text-sm text-slate-700">{state.brandBrief.summary}</p>
-
-          <div className="flex flex-wrap gap-2">
-            {state.brandBrief.toneTags.map((tag) => (
-              <span key={tag} className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-700">
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          <div className="grid gap-3 md:grid-cols-2 text-sm text-slate-700">
-            <p><span className="font-semibold text-slate-900">Primary customer:</span> {state.brandBrief.primaryCustomer}</p>
-            <p><span className="font-semibold text-slate-900">Geography:</span> {state.brandBrief.geography}</p>
+          <div>
+            <label className="label">Brand summary</label>
+            <textarea
+              className="input min-h-24"
+              value={state.brandBrief.summary}
+              onChange={(e) => updateBrief("summary", e.target.value)}
+            />
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <h3 className="text-sm font-semibold text-slate-900">Key product claims / themes</h3>
-              <ul className="mt-2 list-disc pl-5 text-sm text-slate-700 space-y-1">
-                {state.brandBrief.keyClaims.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+              <label className="label">Category</label>
+              <input className="input" value={state.brandBrief.category} onChange={(e) => updateBrief("category", e.target.value)} />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-slate-900">Do / Don&apos;t voice guidelines</h3>
-              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Do</p>
-              <ul className="mt-1 list-disc pl-5 text-sm text-slate-700 space-y-1">
-                {state.brandBrief.doGuidelines.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-              <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-500">Don&apos;t</p>
-              <ul className="mt-1 list-disc pl-5 text-sm text-slate-700 space-y-1">
-                {state.brandBrief.dontGuidelines.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+              <label className="label">Subcategory</label>
+              <input className="input" value={state.brandBrief.subcategory} onChange={(e) => updateBrief("subcategory", e.target.value)} />
             </div>
           </div>
 
-          <details className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-            <summary className="cursor-pointer text-sm font-semibold text-slate-700">Advanced controls</summary>
-            <div className="mt-3 grid gap-3 md:grid-cols-2">
-              <div>
-                <label className="label">Brand name</label>
-                <input className="input" value={brandName} onChange={(e) => setBrandName(e.target.value)} />
-              </div>
-              <div>
-                <label className="label">Positioning</label>
-                <select className="input" value={positioning} onChange={(e) => setPositioning(e.target.value as Positioning)}>
-                  {positioningOptions.map((option) => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="label">Product focus</label>
+              <input className="input" value={state.brandBrief.productFocus} onChange={(e) => updateBrief("productFocus", e.target.value)} />
+            </div>
+            <div>
+              <label className="label">Price tier</label>
+              <input className="input" value={state.brandBrief.priceTier} onChange={(e) => updateBrief("priceTier", e.target.value)} />
+            </div>
+          </div>
+
+          <div>
+            <label className="label">Positioning statement</label>
+            <textarea
+              className="input min-h-20"
+              value={state.brandBrief.positioningStatement}
+              onChange={(e) => updateBrief("positioningStatement", e.target.value)}
+            />
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="label">Primary customer</label>
+              <input className="input" value={state.brandBrief.primaryCustomer} onChange={(e) => updateBrief("primaryCustomer", e.target.value)} />
+            </div>
+            <div>
+              <label className="label">Geography</label>
+              <input className="input" value={state.brandBrief.geography} onChange={(e) => updateBrief("geography", e.target.value)} />
+            </div>
+          </div>
+
+          <div>
+            <label className="label">Tone tags (comma separated)</label>
+            <input
+              className="input"
+              value={state.brandBrief.toneTags.join(", ")}
+              onChange={(e) => updateBrief("toneTags", e.target.value.split(",").map((item) => item.trim()).filter(Boolean))}
+            />
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="label">Target segments (one per line)</label>
+              <textarea
+                className="input min-h-24"
+                value={state.brandBrief.targetSegments.join("\n")}
+                onChange={(e) => updateBrief("targetSegments", parseLines(e.target.value))}
+              />
+            </div>
+            <div>
+              <label className="label">Key claims / themes (one per line)</label>
+              <textarea
+                className="input min-h-24"
+                value={state.brandBrief.keyClaims.join("\n")}
+                onChange={(e) => updateBrief("keyClaims", parseLines(e.target.value))}
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="label">Messaging pillars (one per line)</label>
+              <textarea
+                className="input min-h-24"
+                value={state.brandBrief.messagingPillars.join("\n")}
+                onChange={(e) => updateBrief("messagingPillars", parseLines(e.target.value))}
+              />
+            </div>
+            <div>
+              <label className="label">Voice guidelines (Do / Don&apos;t, one per line)</label>
+              <div className="grid gap-3">
+                <textarea
+                  className="input min-h-20"
+                  value={state.brandBrief.doGuidelines.join("\n")}
+                  onChange={(e) => updateBrief("doGuidelines", parseLines(e.target.value))}
+                />
+                <textarea
+                  className="input min-h-20"
+                  value={state.brandBrief.dontGuidelines.join("\n")}
+                  onChange={(e) => updateBrief("dontGuidelines", parseLines(e.target.value))}
+                />
               </div>
             </div>
-          </details>
+          </div>
         </section>
       )}
 
       <InterpretationBox
         bullets={[
-          "Operator interpretation: brand voice should balance confidence with practical daily proof.",
-          "Recommendation: prioritize relatable creators with strong save-to-click behavior.",
-          "Next step: generate campaign brief from this brand brief context."
+          "Operator interpretation: this profile is now your source of truth for creator matching and outreach tone.",
+          "Recommendation: keep positioning and claims tight to improve shortlist precision.",
+          "Next step: continue to campaign creation and generate your campaign brief."
         ]}
       />
 
