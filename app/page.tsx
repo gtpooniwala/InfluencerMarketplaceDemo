@@ -15,17 +15,16 @@ export default function LandingPage() {
           </p>
 
           <h1 className="text-4xl font-semibold tracking-tight text-ink md:text-5xl">
-            Find the best micro-influencers for your campaign.
+            Find micro-influencers that actually drive sales.
           </h1>
 
           <p className="max-w-3xl text-lg text-slate-600">
-            We help brands turn creator partnerships into measurable, repeat sales by converting messy context into a
-            launch-ready campaign plan, tailored shortlist, outreach, and a clear performance dashboard.
+            From brief to outreach, launch creator campaigns in minutes.
           </p>
 
           <div className="flex flex-wrap gap-3 pt-1">
             <Link href="/brand/onboarding" className="btn-primary px-6 py-3 text-base">
-              Start campaign
+              Create Campaign
             </Link>
             <Link href="/brand/onboarding" className="btn-secondary px-6 py-3 text-base">
               Get a demo
