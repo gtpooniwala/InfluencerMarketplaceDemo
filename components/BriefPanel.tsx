@@ -2,54 +2,121 @@ import { CampaignBrief } from "@/lib/mockData";
 
 type BriefPanelProps = {
   brief: CampaignBrief;
+  generated: boolean;
+  onChangeField: (field: keyof CampaignBrief, value: string) => void;
+  onChangeAdvanced: (field: keyof CampaignBrief["advancedControls"], value: string) => void;
 };
 
-export const BriefPanel = ({ brief }: BriefPanelProps) => {
+const Field = ({
+  label,
+  value,
+  placeholder,
+  onChange,
+  multiline
+}: {
+  label: string;
+  value: string;
+  placeholder: string;
+  onChange: (value: string) => void;
+  multiline?: boolean;
+}) => (
+  <div>
+    <label className="label">{label}</label>
+    {multiline ? (
+      <textarea className="input min-h-20" value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />
+    ) : (
+      <input className="input" value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />
+    )}
+  </div>
+);
+
+export const BriefPanel = ({ brief, generated, onChangeField, onChangeAdvanced }: BriefPanelProps) => {
   return (
     <section className="demo-card space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-ink">Campaign Brief</h2>
-        <p className="mt-1 text-sm text-slate-600">Live summary updated from intake signals.</p>
+        <h2 className="text-xl font-semibold text-ink">Campaign brief (manual editor)</h2>
+        <p className="mt-1 text-sm text-slate-600">
+          {generated ? "AI prefilled this brief. Edit anything before planning." : "Choose “Help me create it” above to prefill this section."}
+        </p>
       </div>
 
-      <div className="space-y-3 text-sm text-slate-700">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Objective</p>
-          <p className="mt-1">{brief.objective}</p>
-        </div>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Audience</p>
-          <p className="mt-1">{brief.audience}</p>
-        </div>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Deliverables</p>
-          <ul className="mt-1 list-disc pl-5">
-            {brief.deliverables.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Timeline</p>
-            <p className="mt-1">{brief.timeline}</p>
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Budget range</p>
-            <p className="mt-1">{brief.budgetRange}</p>
-          </div>
-        </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field
+          label="Campaign name"
+          value={brief.campaignName}
+          placeholder="e.g. Bamboo Bump Mother’s Day Launch"
+          onChange={(v) => onChangeField("campaignName", v)}
+        />
+        <Field label="Objective" value={brief.objective} placeholder="Revenue, UGC, awareness..." onChange={(v) => onChangeField("objective", v)} />
+      </div>
+
+      <Field
+        label="Audience"
+        value={brief.audience}
+        placeholder="Who this campaign is for"
+        onChange={(v) => onChangeField("audience", v)}
+      />
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field
+          label="Deliverables"
+          value={brief.deliverables}
+          placeholder="Creator posts, stories, UGC outputs"
+          onChange={(v) => onChangeField("deliverables", v)}
+        />
+        <Field
+          label="Usage rights"
+          value={brief.usageRights}
+          placeholder="Whitelisting or paid usage terms"
+          onChange={(v) => onChangeField("usageRights", v)}
+        />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field label="Timeline" value={brief.timeline} placeholder="e.g. 3 weeks" onChange={(v) => onChangeField("timeline", v)} />
+        <Field label="Budget" value={brief.budget} placeholder="e.g. GBP 12,000" onChange={(v) => onChangeField("budget", v)} />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field
+          label="Budget allocation"
+          value={brief.budgetAllocation}
+          placeholder="Creator spend / paid / ops"
+          onChange={(v) => onChangeField("budgetAllocation", v)}
+        />
+        <Field label="Geo" value={brief.geo} placeholder="Target geography" onChange={(v) => onChangeField("geo", v)} />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field
+          label="Platform mix"
+          value={brief.platformMix}
+          placeholder="TikTok / IG / YouTube split"
+          onChange={(v) => onChangeField("platformMix", v)}
+        />
+        <Field
+          label="KPI focus"
+          value={brief.kpiFocus}
+          placeholder="CTR, saves, conversions"
+          onChange={(v) => onChangeField("kpiFocus", v)}
+        />
       </div>
 
       <details className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-        <summary className="cursor-pointer text-sm font-semibold text-slate-700">Advanced filters</summary>
-        <div className="mt-3 space-y-2 text-sm text-slate-600">
-          <p>
-            <span className="font-semibold text-slate-700">Demographics:</span> {brief.advancedFilters.demographics}
-          </p>
-          <p>
-            <span className="font-semibold text-slate-700">Hashtags:</span> {brief.advancedFilters.hashtags.join(", ")}
-          </p>
+        <summary className="cursor-pointer text-sm font-semibold text-slate-700">Advanced targeting controls</summary>
+        <div className="mt-3 grid gap-3">
+          <Field
+            label="Demographics"
+            value={brief.advancedControls.demographics}
+            placeholder="Audience demographics"
+            onChange={(v) => onChangeAdvanced("demographics", v)}
+          />
+          <Field
+            label="Hashtags"
+            value={brief.advancedControls.hashtags}
+            placeholder="#example #example2"
+            onChange={(v) => onChangeAdvanced("hashtags", v)}
+          />
         </div>
       </details>
     </section>

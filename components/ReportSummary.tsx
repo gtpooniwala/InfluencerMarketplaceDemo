@@ -7,22 +7,17 @@ type ReportSummaryProps = {
 export const ReportSummary = ({ report }: ReportSummaryProps) => {
   return (
     <section className="demo-card space-y-4">
-      <h2 className="text-xl font-semibold text-ink">Auto report summary</h2>
+      <h2 className="text-2xl font-semibold text-ink">Campaign Dashboard</h2>
+      <p className="text-sm text-slate-700">{report.summary}</p>
 
-      <article>
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Predicted vs Actual</h3>
-        <p className="mt-1 text-sm text-slate-700">{report.narrative.predictedVsActual}</p>
-      </article>
-
-      <article>
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">What worked</h3>
-        <p className="mt-1 text-sm text-slate-700">{report.narrative.whatWorked}</p>
-      </article>
-
-      <article>
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">What to change next time</h3>
-        <p className="mt-1 text-sm text-slate-700">{report.narrative.whatToChange}</p>
-      </article>
+      <div>
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">What to do next</h3>
+        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+          {report.whatToDoNext.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 };

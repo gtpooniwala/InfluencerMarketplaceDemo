@@ -1,26 +1,25 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { isDemoMode } from "@/lib/demoMode";
 import {
-  AudienceType,
+  BrandBrief,
   BrandMemory,
   CampaignBrief,
-  CampaignGoal,
   CampaignPlan,
   CampaignReport,
   CreatorRecommendation,
   IntakeAnswers,
   OutreachDraft,
-  Positioning,
+  baseReport,
   brandMemory,
+  buildBrandBrief,
+  buildCampaignBriefFromIntake,
   buildCampaignPlan,
   buildInterpretation,
   buildOutreachDrafts,
   buildReportFromSelection,
-  campaignBrief,
-  campaignPlan,
   creators,
+  emptyCampaignBrief,
   sampleContext
 } from "@/lib/mockData";
 
@@ -38,10 +37,12 @@ export type TimelineState = {
 
 export type DemoFlowState = {
   brandMemory: BrandMemory;
+  brandBrief: BrandBrief | null;
   intake: IntakeAnswers;
   brief: CampaignBrief;
+  briefGenerated: boolean;
   interpretation: string[];
-  plan: CampaignPlan;
+  plan: CampaignPlan | null;
   creators: CreatorRecommendation[];
   selectedCreatorIds: string[];
   autoPersonalizeScripts: boolean;
@@ -51,8 +52,7 @@ export type DemoFlowState = {
 };
 
 type Updater = DemoFlowState | ((prev: DemoFlowState) => DemoFlowState);
-
-type IntakeField = "launch" | "vibe" | "goal" | "audience";
+type IntakeField = "launchType" | "successGoal" | "audienceType" | "vibe";
 
 const isBrowser = () => typeof window !== "undefined";
 
@@ -65,51 +65,29 @@ const defaultTimeline = (): TimelineState => ({
   snoozed: false
 });
 
-const buildBriefFromIntake = (intake: IntakeAnswers): CampaignBrief => {
-  const objectiveByGoal: Record<CampaignGoal, string> = {
-    Sales: "Drive attributable product sales from creator-led social placements.",
-    Awareness: "Maximize qualified reach and attention in the core UK segment.",
-    UGC: "Generate reusable creator content for paid + owned channels.",
-    "Retail footfall": "Increase in-store visit intent with location-relevant creator proof."
-  };
-
-  return {
-    ...campaignBrief,
-    objective: objectiveByGoal[intake.goal],
-    audience:
-      intake.audience === "New audience"
-        ? "New UK shoppers who prioritize comfortwear and peer recommendations."
-        : "Existing customers ready for repeat purchase and referral.",
-    deliverables: [...campaignBrief.deliverables]
-  };
-};
-
 export const createDefaultDemoFlowState = (): DemoFlowState => {
-  const baseIntake: IntakeAnswers = {
-    launch: sampleContext.launch,
+  const intake: IntakeAnswers = {
+    launchType: sampleContext.launchType,
+    successGoal: sampleContext.successGoal,
+    audienceType: sampleContext.audienceType,
     vibe: sampleContext.vibe,
-    goal: sampleContext.goal,
-    audience: sampleContext.audience,
-    contextSources: ["Sample context loaded"]
+    contextSources: []
   };
 
   return {
     brandMemory: { ...brandMemory, assets: [...brandMemory.assets] },
-    intake: baseIntake,
-    brief: { ...campaignBrief, deliverables: [...campaignBrief.deliverables] },
-    interpretation: buildInterpretation({
-      positioning: baseIntake.vibe,
-      audience: baseIntake.audience,
-      goal: baseIntake.goal,
-      launch: baseIntake.launch
-    }),
-    plan: campaignPlan,
-    creators: creators,
+    brandBrief: null,
+    intake,
+    brief: emptyCampaignBrief(),
+    briefGenerated: false,
+    interpretation: [],
+    plan: null,
+    creators,
     selectedCreatorIds: [],
     autoPersonalizeScripts: true,
     outreachDrafts: [],
     timeline: defaultTimeline(),
-    report: buildReportFromSelection([])
+    report: baseReport
   };
 };
 
@@ -127,18 +105,19 @@ export const normalizeDemoFlowState = (raw: unknown): DemoFlowState => {
           assets: candidate.brandMemory.assets ?? fallback.brandMemory.assets
         }
       : fallback.brandMemory,
+    brandBrief: candidate.brandBrief ?? fallback.brandBrief,
     intake: candidate.intake ? { ...fallback.intake, ...candidate.intake } : fallback.intake,
     brief: candidate.brief
       ? {
           ...fallback.brief,
           ...candidate.brief,
-          deliverables: candidate.brief.deliverables ?? fallback.brief.deliverables,
-          advancedFilters: {
-            ...fallback.brief.advancedFilters,
-            ...(candidate.brief.advancedFilters ?? {})
+          advancedControls: {
+            ...fallback.brief.advancedControls,
+            ...(candidate.brief.advancedControls ?? {})
           }
         }
       : fallback.brief,
+    briefGenerated: candidate.briefGenerated ?? fallback.briefGenerated,
     interpretation: candidate.interpretation ?? fallback.interpretation,
     plan: candidate.plan ?? fallback.plan,
     creators: candidate.creators ?? fallback.creators,
@@ -150,83 +129,76 @@ export const normalizeDemoFlowState = (raw: unknown): DemoFlowState => {
   };
 };
 
+export const applyGenerateBrandBriefToState = (state: DemoFlowState): DemoFlowState => ({
+  ...state,
+  brandBrief: buildBrandBrief(state.brandMemory)
+});
+
 export const applySampleContextToState = (state: DemoFlowState): DemoFlowState => {
-  const nextIntake: IntakeAnswers = {
-    launch: sampleContext.launch,
+  const intake: IntakeAnswers = {
+    launchType: sampleContext.launchType,
+    successGoal: sampleContext.successGoal,
+    audienceType: sampleContext.audienceType,
     vibe: sampleContext.vibe,
-    goal: sampleContext.goal,
-    audience: sampleContext.audience,
-    contextSources: [
-      "Canva link imported",
-      "Pitch deck uploaded",
-      "Meeting transcript uploaded",
-      "Product images uploaded"
-    ]
+    contextSources: [...sampleContext.contextSources]
   };
 
-  const nextBrief = buildBriefFromIntake(nextIntake);
+  const brief = buildCampaignBriefFromIntake(intake, state.brandMemory);
+  const plan = buildCampaignPlan(brief, intake.vibe);
 
   return {
     ...state,
-    intake: nextIntake,
-    brief: nextBrief,
-    interpretation: buildInterpretation({
-      positioning: nextIntake.vibe,
-      audience: nextIntake.audience,
-      goal: nextIntake.goal,
-      launch: nextIntake.launch
-    }),
-    plan: buildCampaignPlan(nextIntake.vibe)
+    intake,
+    brief,
+    briefGenerated: true,
+    interpretation: buildInterpretation(brief, plan)
+  };
+};
+
+export const applyGenerateBriefToState = (state: DemoFlowState): DemoFlowState => {
+  const brief = buildCampaignBriefFromIntake(state.intake, state.brandMemory);
+  const plan = buildCampaignPlan(brief, state.intake.vibe);
+
+  return {
+    ...state,
+    brief,
+    briefGenerated: true,
+    interpretation: buildInterpretation(brief, plan)
   };
 };
 
 export const applyGeneratePlanToState = (state: DemoFlowState): DemoFlowState => {
-  const intake = isDemoMode
-    ? {
-        ...state.intake,
-        launch: state.intake.launch || sampleContext.launch,
-        contextSources:
-          state.intake.contextSources.length > 0
-            ? state.intake.contextSources
-            : ["Sample context loaded"]
-      }
-    : state.intake;
+  const sourceBrief = state.briefGenerated ? state.brief : buildCampaignBriefFromIntake(state.intake, state.brandMemory);
+  const plan = buildCampaignPlan(sourceBrief, state.intake.vibe);
 
-  const nextBrief = buildBriefFromIntake(intake);
   return {
     ...state,
-    intake,
-    brief: nextBrief,
-    interpretation: buildInterpretation({
-      positioning: intake.vibe,
-      audience: intake.audience,
-      goal: intake.goal,
-      launch: intake.launch
-    }),
-    plan: buildCampaignPlan(intake.vibe)
+    brief: sourceBrief,
+    briefGenerated: true,
+    plan,
+    interpretation: buildInterpretation(sourceBrief, plan)
   };
 };
 
 export const applyToggleCreatorToState = (state: DemoFlowState, creatorId: string): DemoFlowState => {
-  const selected = state.selectedCreatorIds.includes(creatorId)
+  const next = state.selectedCreatorIds.includes(creatorId)
     ? state.selectedCreatorIds.filter((id) => id !== creatorId)
     : [...state.selectedCreatorIds, creatorId];
 
   return {
     ...state,
-    selectedCreatorIds: selected
+    selectedCreatorIds: next
   };
 };
 
 export const applyGenerateOutreachToState = (state: DemoFlowState): DemoFlowState => {
   const selectedCreators = state.creators.filter((creator) => state.selectedCreatorIds.includes(creator.id));
-  const drafts = buildOutreachDrafts(selectedCreators, state.brief, {
-    autoPersonalize: state.autoPersonalizeScripts
-  });
 
   return {
     ...state,
-    outreachDrafts: drafts
+    outreachDrafts: buildOutreachDrafts(selectedCreators, state.brief, {
+      autoPersonalize: state.autoPersonalizeScripts
+    })
   };
 };
 
@@ -237,7 +209,8 @@ export const applyMarkOutreachSentToState = (state: DemoFlowState): DemoFlowStat
     timeline: {
       ...state.timeline,
       outreachSent: true,
-      repliesPending: true
+      repliesPending: true,
+      shippingDeadline: true
     },
     report: buildReportFromSelection(selectedCreators)
   };
@@ -248,7 +221,8 @@ export const applySendFollowUpToState = (state: DemoFlowState): DemoFlowState =>
   timeline: {
     ...state.timeline,
     followUpSent: true,
-    snoozed: false
+    snoozed: false,
+    contentReviewDue: true
   }
 });
 
@@ -273,6 +247,7 @@ export const applyAdvanceTimelineToState = (
 
 export const loadDemoFlowState = (): DemoFlowState => {
   if (!isBrowser()) return createDefaultDemoFlowState();
+
   const raw = window.localStorage.getItem(DEMO_FLOW_STORAGE_KEY);
   if (!raw) return createDefaultDemoFlowState();
 
@@ -301,7 +276,6 @@ export const useDemoFlowStore = () => {
 
   useEffect(() => {
     if (!isBrowser()) return;
-
     const refresh = () => setState(loadDemoFlowState());
     refresh();
     setHydrated(true);
@@ -333,8 +307,8 @@ export const useDemoFlowStore = () => {
     }));
   }, [setDemoState]);
 
-  const applySampleContext = useCallback(() => {
-    setDemoState((prev) => applySampleContextToState(prev));
+  const generateBrandBrief = useCallback(() => {
+    setDemoState((prev) => applyGenerateBrandBriefToState(prev));
   }, [setDemoState]);
 
   const setChatAnswer = useCallback(
@@ -362,8 +336,42 @@ export const useDemoFlowStore = () => {
     }));
   }, [setDemoState]);
 
+  const applySampleContext = useCallback(() => {
+    setDemoState((prev) => applySampleContextToState(prev));
+  }, [setDemoState]);
+
+  const generateBrief = useCallback(() => {
+    setDemoState((prev) => applyGenerateBriefToState(prev));
+  }, [setDemoState]);
+
   const generatePlan = useCallback(() => {
     setDemoState((prev) => applyGeneratePlanToState(prev));
+  }, [setDemoState]);
+
+  const updateBriefField = useCallback((field: keyof CampaignBrief, value: string) => {
+    setDemoState((prev) => {
+      if (field === "advancedControls") return prev;
+      return {
+        ...prev,
+        brief: {
+          ...prev.brief,
+          [field]: value
+        }
+      };
+    });
+  }, [setDemoState]);
+
+  const updateAdvancedBriefField = useCallback((field: keyof CampaignBrief["advancedControls"], value: string) => {
+    setDemoState((prev) => ({
+      ...prev,
+      brief: {
+        ...prev.brief,
+        advancedControls: {
+          ...prev.brief.advancedControls,
+          [field]: value
+        }
+      }
+    }));
   }, [setDemoState]);
 
   const toggleCreator = useCallback((creatorId: string) => {
@@ -405,10 +413,14 @@ export const useDemoFlowStore = () => {
       hydrated,
       setDemoState,
       setBrandMemory,
-      applySampleContext,
+      generateBrandBrief,
       setChatAnswer,
       addContextSource,
+      applySampleContext,
+      generateBrief,
       generatePlan,
+      updateBriefField,
+      updateAdvancedBriefField,
       toggleCreator,
       setAutoPersonalize,
       generateOutreach,
@@ -422,6 +434,8 @@ export const useDemoFlowStore = () => {
       addContextSource,
       advanceTimeline,
       applySampleContext,
+      generateBrief,
+      generateBrandBrief,
       generateOutreach,
       generatePlan,
       hydrated,
@@ -434,7 +448,9 @@ export const useDemoFlowStore = () => {
       setDemoState,
       snoozeFollowUp,
       state,
-      toggleCreator
+      toggleCreator,
+      updateAdvancedBriefField,
+      updateBriefField
     ]
   );
 };

@@ -1,6 +1,28 @@
 export type Positioning = "Premium" | "Playful" | "Clinical" | "Bold";
-export type CampaignGoal = "Sales" | "Awareness" | "UGC" | "Retail footfall";
-export type AudienceType = "Existing audience" | "New audience";
+
+export type CampaignLaunchType =
+  | "New product"
+  | "Restock"
+  | "Retail launch"
+  | "Seasonal"
+  | "Always-on"
+  | "Sale";
+
+export type CampaignSuccessGoal =
+  | "Revenue"
+  | "UGC"
+  | "Awareness"
+  | "Retail footfall"
+  | "Test audience";
+
+export type CampaignAudienceType = "Existing customers" | "Lookalikes" | "New category buyers";
+
+export type CampaignVibe =
+  | "Premium & polished"
+  | "Relatable everyday"
+  | "Bold & expressive"
+  | "Educational expert"
+  | "Playful & fun";
 
 export type BrandMemory = {
   brandName: string;
@@ -9,50 +31,72 @@ export type BrandMemory = {
   assets: string[];
 };
 
+export type BrandBrief = {
+  summary: string;
+  toneTags: string[];
+  primaryCustomer: string;
+  geography: string;
+  keyClaims: string[];
+  doGuidelines: string[];
+  dontGuidelines: string[];
+};
+
 export type IntakeAnswers = {
-  launch: string;
-  vibe: Positioning;
-  goal: CampaignGoal;
-  audience: AudienceType;
+  launchType: CampaignLaunchType;
+  successGoal: CampaignSuccessGoal;
+  audienceType: CampaignAudienceType;
+  vibe: CampaignVibe;
   contextSources: string[];
 };
 
 export type CampaignBrief = {
+  campaignName: string;
   objective: string;
   audience: string;
-  deliverables: string[];
+  deliverables: string;
+  usageRights: string;
   timeline: string;
-  budgetRange: string;
-  advancedFilters: {
+  budget: string;
+  budgetAllocation: string;
+  geo: string;
+  platformMix: string;
+  kpiFocus: string;
+  advancedControls: {
     demographics: string;
-    hashtags: string[];
+    hashtags: string;
   };
 };
 
 export type CampaignPlan = {
-  predictions: {
-    reach: string;
-    engagement: string;
-    conversionLikelihood: "Low" | "Medium" | "High";
-  };
-  messagingPillars: string[];
+  recommendedTargeting: string;
+  targetingChips: string[];
+  messagingPillars: Array<{ title: string; description: string }>;
+  creatorArchetypes: Array<{ title: string; description: string }>;
   riskFlags: string[];
-  archetypes: string[];
+  assumptions: string[];
+  predictedPerformance: Array<{ label: string; range: string }>;
 };
 
 export type CreatorRecommendation = {
   id: string;
   name: string;
-  niche: string;
-  vibe: Positioning;
+  handle: string;
+  avatarUrl: string;
+  followerRange: string;
+  vibeTags: string[];
   fitScore: number;
-  overlapPct: number;
   conversionLikelihood: "Low" | "Med" | "High";
-  whyMatch: string;
-  signals: string[];
-  suggestedAngle: string;
-  suggestedHook: string;
+  overlapPct: number;
+  whyRelevant: string;
+  suggestedIntro: string;
+  suggestedMessageDirection: string;
   examplePosts: string[];
+  audienceHighlights: string[];
+  contentStyleTags: string[];
+  brandSafetyNotes: string[];
+  priorCollabs: string[];
+  profileUrl: string;
+  signals: string[];
 };
 
 export type OutreachDraft = {
@@ -62,23 +106,30 @@ export type OutreachDraft = {
 };
 
 export type CampaignReport = {
-  narrative: {
-    predictedVsActual: string;
-    whatWorked: string;
-    whatToChange: string;
-  };
+  summary: string;
+  whatToDoNext: string[];
   metrics: {
-    spendUsed: string;
+    spend: string;
+    budgetUsedPct: string;
+    impressions: string;
     reach: string;
     engagementRate: string;
     saves: string;
     ctr: string;
+    linkClicks: string;
     conversions: string;
+    cpa: string;
+    cpm: string;
     sentimentShift: "Up" | "Down";
+  };
+  chartSeries: {
+    spendVsBudget: Array<{ label: string; value: number }>;
+    performanceByWeek: Array<{ label: string; reach: number; engagement: number }>;
   };
   creatorComparison: Array<{
     creator: string;
     reach: string;
+    engagementRate: string;
     ctr: string;
     conversions: string;
   }>;
@@ -86,232 +137,424 @@ export type CampaignReport = {
 };
 
 export const positioningOptions: Positioning[] = ["Premium", "Playful", "Clinical", "Bold"];
-export const goalOptions: CampaignGoal[] = ["Sales", "Awareness", "UGC", "Retail footfall"];
-export const audienceOptions: AudienceType[] = ["Existing audience", "New audience"];
+
+export const launchOptions: CampaignLaunchType[] = [
+  "New product",
+  "Restock",
+  "Retail launch",
+  "Seasonal",
+  "Always-on",
+  "Sale"
+];
+
+export const successOptions: CampaignSuccessGoal[] = ["Revenue", "UGC", "Awareness", "Retail footfall", "Test audience"];
+
+export const audienceOptions: CampaignAudienceType[] = ["Existing customers", "Lookalikes", "New category buyers"];
+
+export const vibeOptions: CampaignVibe[] = [
+  "Premium & polished",
+  "Relatable everyday",
+  "Bold & expressive",
+  "Educational expert",
+  "Playful & fun"
+];
+
+export const contextActions = [
+  "Upload product images",
+  "Paste website",
+  "Upload pitch deck",
+  "Paste recent TikTok/IG links",
+  "Paste notes/transcript from team call"
+] as const;
 
 export const brandMemory: BrandMemory = {
   brandName: "Bamboo Bump",
   website: "https://bamboobump.co.uk",
   positioning: "Playful",
-  assets: ["logo.svg", "hero-product.jpg", "ugc-guidelines.pdf"]
+  assets: ["logo.svg", "product-flatlay.jpg", "ugc-style-guide.pdf"]
 };
 
 export const sampleContext = {
-  title: "Bamboo Bump Mother’s Day Push",
+  title: "Bamboo Bump Mother’s Day Campaign",
   summary:
-    "Bamboo maternity leggings for UK launch. Prioritize warm, body-positive creator storytelling with clear purchase hooks.",
-  launch: "Bamboo maternity leggings",
-  vibe: "Playful" as Positioning,
-  goal: "Sales" as CampaignGoal,
-  audience: "New audience" as AudienceType
+    "Bamboo Bump is launching bamboo maternity leggings in the UK for a Mother’s Day push. Goal is direct revenue with creator-led short-form content.",
+  launchType: "New product" as CampaignLaunchType,
+  successGoal: "Revenue" as CampaignSuccessGoal,
+  audienceType: "New category buyers" as CampaignAudienceType,
+  vibe: "Relatable everyday" as CampaignVibe,
+  contextSources: [
+    "Website parsed",
+    "Product images uploaded",
+    "Pitch deck uploaded",
+    "Recent social links reviewed",
+    "Team call notes parsed"
+  ]
 };
 
-export const campaignBrief: CampaignBrief = {
-  objective: "Drive Mother’s Day conversion intent for Bamboo Bump’s new leggings line.",
-  audience: "UK mothers (25-38) prioritizing comfort, confidence, and everyday wear.",
-  deliverables: ["3 TikTok videos", "3 IG Reels", "6 Story frames with link stickers"],
-  timeline: "3 weeks",
-  budgetRange: "GBP 8k-12k",
-  advancedFilters: {
-    demographics: "Women 24-40, UK metro + suburban",
-    hashtags: ["#maternitystyle", "#mumlife", "#comfortwear"]
+export const emptyCampaignBrief = (): CampaignBrief => ({
+  campaignName: "",
+  objective: "",
+  audience: "",
+  deliverables: "",
+  usageRights: "",
+  timeline: "",
+  budget: "",
+  budgetAllocation: "",
+  geo: "",
+  platformMix: "",
+  kpiFocus: "",
+  advancedControls: {
+    demographics: "",
+    hashtags: ""
   }
+});
+
+const positioningToneMap: Record<Positioning, string[]> = {
+  Premium: ["Confident", "Curated", "Elevated"],
+  Playful: ["Warm", "Relatable", "Light-hearted"],
+  Clinical: ["Evidence-led", "Clear", "Precise"],
+  Bold: ["Expressive", "High-energy", "Attention-grabbing"]
 };
 
-const planByVibe: Record<Positioning, CampaignPlan> = {
+export const buildBrandBrief = (memory: BrandMemory): BrandBrief => {
+  const toneTags = positioningToneMap[memory.positioning];
+
+  return {
+    summary:
+      `${memory.brandName} is a comfort-first maternitywear brand focused on helping mothers feel confident in daily life. ` +
+      `The strongest brand territory is practical comfort with authentic social proof, making micro-influencer storytelling a high-fit channel.`,
+    toneTags,
+    primaryCustomer: "Mothers aged 24-38 balancing work, home, and convenience-led shopping.",
+    geography: "United Kingdom (priority), with expansion to Ireland in follow-up cycles.",
+    keyClaims: [
+      "Soft bamboo fabric with all-day stretch",
+      "Designed for maternity and postpartum comfort",
+      "Easy styling for routine-heavy days"
+    ],
+    doGuidelines: [
+      "Show real-life movement and everyday context",
+      "Use confidence-forward language with clear shopping cues"
+    ],
+    dontGuidelines: [
+      "Avoid over-produced luxury-only framing",
+      "Avoid clinical or technical claims without clear proof"
+    ]
+  };
+};
+
+const vibeToPositioning: Record<CampaignVibe, Positioning> = {
+  "Premium & polished": "Premium",
+  "Relatable everyday": "Playful",
+  "Bold & expressive": "Bold",
+  "Educational expert": "Clinical",
+  "Playful & fun": "Playful"
+};
+
+export const toPositioning = (vibe: CampaignVibe): Positioning => vibeToPositioning[vibe];
+
+export const buildCampaignBriefFromIntake = (intake: IntakeAnswers, brand: BrandMemory): CampaignBrief => {
+  const objectiveByGoal: Record<CampaignSuccessGoal, string> = {
+    Revenue: "Drive attributable ecommerce revenue from creator-led short-form content.",
+    UGC: "Generate reusable creator assets for paid social and lifecycle channels.",
+    Awareness: "Increase qualified awareness among likely maternitywear buyers.",
+    "Retail footfall": "Drive store-intent in high-priority urban catchments.",
+    "Test audience": "Validate message-market fit with one new buyer segment."
+  };
+
+  const deliverablesByLaunch: Record<CampaignLaunchType, string> = {
+    "New product": "6 creator videos + 12 story frames + 6 cutdowns",
+    Restock: "4 creator videos + 8 story frames",
+    "Retail launch": "5 creator videos + 5 location-led stories",
+    Seasonal: "6 creator videos + 10 stories",
+    "Always-on": "8 creator videos per month + evergreen story support",
+    Sale: "5 urgency-led creator videos + 8 offer stories"
+  };
+
+  const budgetByGoal: Record<CampaignSuccessGoal, string> = {
+    Revenue: "GBP 12,000",
+    UGC: "GBP 10,000",
+    Awareness: "GBP 9,000",
+    "Retail footfall": "GBP 11,000",
+    "Test audience": "GBP 7,500"
+  };
+
+  return {
+    campaignName: `${brand.brandName} ${intake.launchType} Campaign`,
+    objective: objectiveByGoal[intake.successGoal],
+    audience:
+      intake.audienceType === "Existing customers"
+        ? "Existing Bamboo Bump customers and warm site traffic"
+        : intake.audienceType === "Lookalikes"
+          ? "Lookalike audiences modeled from converters and high-intent engagers"
+          : "New category buyers comparing comfortwear alternatives",
+    deliverables: deliverablesByLaunch[intake.launchType],
+    usageRights: "Paid social amplification rights for 30 days",
+    timeline: "3 weeks",
+    budget: budgetByGoal[intake.successGoal],
+    budgetAllocation: "60% creators, 25% paid amplification, 15% creative ops",
+    geo: "UK (London, Manchester, Birmingham, Leeds)",
+    platformMix: "TikTok 60% / Instagram 40%",
+    kpiFocus: intake.successGoal === "Revenue" ? "CTR, link clicks, conversion rate" : "Reach, saves, engagement quality",
+    advancedControls: {
+      demographics: "Women 24-38, parenting and comfortwear affinity",
+      hashtags: "#maternitystyle #mumlife #comfortwear"
+    }
+  };
+};
+
+const planByPositioning: Record<Positioning, Omit<CampaignPlan, "recommendedTargeting" | "targetingChips">> = {
   Premium: {
-    predictions: {
-      reach: "220k-300k",
-      engagement: "4.8%-6.1%",
-      conversionLikelihood: "Medium"
-    },
-    messagingPillars: ["Quality fabric confidence", "Day-to-night styling", "Trustworthy product proof"],
-    riskFlags: ["Tone may feel too polished for relatable creators", "Higher CPM if only premium creators are used"],
-    archetypes: ["Styling educator", "Midsize fashion curator", "Expert-led reviewer"]
+    messagingPillars: [
+      { title: "Quality-led confidence", description: "Lead with premium comfort proof and elevated styling outcomes." },
+      { title: "Everyday versatility", description: "Show one product across multiple daily contexts." },
+      { title: "Trust and polish", description: "Use creators with reliable delivery and clean narrative structure." }
+    ],
+    creatorArchetypes: [
+      { title: "Style educator", description: "Explains fit and styling decisions clearly." },
+      { title: "Midsize fashion curator", description: "High trust with conversion-oriented audiences." },
+      { title: "Confident routine creator", description: "Balances aspiration with practical proof." }
+    ],
+    riskFlags: [
+      "Premium tone can reduce relatability if scripting is over-styled.",
+      "CPM can rise if creator mix skews too polished-only."
+    ],
+    assumptions: ["Brand can provide clear usage rights quickly."],
+    predictedPerformance: [
+      { label: "Projected reach", range: "220k-300k" },
+      { label: "Projected engagement rate", range: "4.9%-6.2%" },
+      { label: "Projected conversion likelihood", range: "Medium" }
+    ]
   },
   Playful: {
-    predictions: {
-      reach: "280k-360k",
-      engagement: "6.2%-8.4%",
-      conversionLikelihood: "High"
-    },
-    messagingPillars: ["Real-life comfort moments", "Body-positive humor", "Quick try-on proof"],
-    riskFlags: ["Comedic hooks can drift off-message", "Need clear CTA consistency across creators"],
-    archetypes: ["Mum-life comedian", "Relatable routine creator", "Try-on storyteller"]
+    messagingPillars: [
+      { title: "Real routine moments", description: "Anchor messaging in morning chaos and day-long comfort." },
+      { title: "Body-positive confidence", description: "Center confidence outcomes rather than product specs." },
+      { title: "Clear shopping cue", description: "Close every concept with one explicit purchase action." }
+    ],
+    creatorArchetypes: [
+      { title: "Relatable mum storyteller", description: "High save-rate and trust in routine content." },
+      { title: "Light-comedy lifestyle creator", description: "Efficient shareability with broad relevance." },
+      { title: "Try-on proof creator", description: "Strong conversion from fit-focused demos." }
+    ],
+    riskFlags: [
+      "Comedic creative can drift from core product claim.",
+      "Inconsistent CTA language can hurt conversion efficiency."
+    ],
+    assumptions: [
+      "Creator scripts include product-link CTA in first story frame.",
+      "Stock can support conversion spikes from week-2 content."
+    ],
+    predictedPerformance: [
+      { label: "Projected reach", range: "290k-380k" },
+      { label: "Projected engagement rate", range: "6.3%-8.1%" },
+      { label: "Projected conversion likelihood", range: "High" }
+    ]
   },
   Clinical: {
-    predictions: {
-      reach: "180k-240k",
-      engagement: "3.9%-5.0%",
-      conversionLikelihood: "Medium"
-    },
-    messagingPillars: ["Material and fit evidence", "Pain-point comparisons", "Clear utility framing"],
-    riskFlags: ["May reduce emotional resonance", "Needs simple language to avoid sounding technical"],
-    archetypes: ["Evidence-first explainer", "Wellness educator", "Comparison review creator"]
+    messagingPillars: [
+      { title: "Proof-led comfort", description: "Use creator demos to validate fit and utility claims." },
+      { title: "Problem-solution narrative", description: "Frame around common maternitywear pain points." },
+      { title: "Clear comparisons", description: "Show why this product wins in practical scenarios." }
+    ],
+    creatorArchetypes: [
+      { title: "Wellness explainer", description: "Balances educational tone with social-native pacing." },
+      { title: "Review-first creator", description: "Strong credibility in recommendation format." },
+      { title: "Routine analyst", description: "High retention in detail-oriented audiences." }
+    ],
+    riskFlags: ["Overly technical language can lower emotional pull.", "Educational scripts need clear CTA for conversion."],
+    assumptions: ["Claims in script are already compliant and approved."],
+    predictedPerformance: [
+      { label: "Projected reach", range: "180k-250k" },
+      { label: "Projected engagement rate", range: "4.0%-5.2%" },
+      { label: "Projected conversion likelihood", range: "Medium" }
+    ]
   },
   Bold: {
-    predictions: {
-      reach: "300k-390k",
-      engagement: "6.0%-8.0%",
-      conversionLikelihood: "Medium"
-    },
-    messagingPillars: ["Standout visual hooks", "Confidence-first narrative", "High-energy social proof"],
-    riskFlags: ["Potential mismatch with conservative audience segments", "Creative variance can increase review load"],
-    archetypes: ["Trend-forward stylist", "Performance storyteller", "High-energy lifestyle host"]
+    messagingPillars: [
+      { title: "Scroll-stopping openings", description: "Use bold visual intros to maximize first-second retention." },
+      { title: "Confidence identity", description: "Position product as an identity upgrade, not just comfortwear." },
+      { title: "Campaign momentum", description: "Deploy higher-volume creative variants quickly." }
+    ],
+    creatorArchetypes: [
+      { title: "Trend-forward stylist", description: "High discovery potential and visual punch." },
+      { title: "High-energy storyteller", description: "Strong top-funnel watch-through rates." },
+      { title: "Culture-led creator", description: "Drives relevance with younger lookalike audiences." }
+    ],
+    riskFlags: ["Tone may polarize older audience segments.", "Creative variance increases review overhead."],
+    assumptions: ["Brand is comfortable with expressive creative experimentation."],
+    predictedPerformance: [
+      { label: "Projected reach", range: "300k-400k" },
+      { label: "Projected engagement rate", range: "5.9%-7.8%" },
+      { label: "Projected conversion likelihood", range: "Medium" }
+    ]
   }
 };
 
-export const buildCampaignPlan = (vibe: Positioning): CampaignPlan => {
-  return planByVibe[vibe];
+export const buildCampaignPlan = (brief: CampaignBrief, vibe: CampaignVibe): CampaignPlan => {
+  const positioning = toPositioning(vibe);
+  const base = planByPositioning[positioning];
+
+  return {
+    ...base,
+    recommendedTargeting:
+      `Prioritize ${brief.geo} audiences with high maternitywear intent, then expand to lookalikes after week 1 performance signals.`,
+    targetingChips: [brief.geo, brief.platformMix, brief.kpiFocus]
+  };
 };
 
-export const campaignPlan = buildCampaignPlan(sampleContext.vibe);
+export const buildInterpretation = (brief: CampaignBrief, plan: CampaignPlan): string[] => [
+  `Targeting recommendation: ${plan.recommendedTargeting}`,
+  `Messaging priority: lead with “${plan.messagingPillars[0]?.title ?? "Comfort-led proof"}”.`,
+  `Creator strategy: start with ${plan.creatorArchetypes[0]?.title ?? "relatable routine creators"} to validate conversion signals.`,
+  `Execution guardrail: align deliverables (${brief.deliverables}) with clear usage rights (${brief.usageRights}).`
+];
 
 export const creators: CreatorRecommendation[] = [
   {
     id: "cr-1",
     name: "Mina Harper",
-    niche: "Mum-life comedy",
-    vibe: "Playful",
+    handle: "@mina.mornings",
+    avatarUrl: "https://placehold.co/96x96/FDE68A/111827?text=MH",
+    followerRange: "48k",
+    vibeTags: ["Relatable", "Mum-life", "Warm humor"],
     fitScore: 95,
-    overlapPct: 82,
     conversionLikelihood: "High",
-    whyMatch: "Her audience responds strongly to practical comfortwear moments with direct shopping cues.",
-    signals: ["High save-rate on try-ons", "Comment intent around fit questions", "Strong UK mum audience overlap"],
-    suggestedAngle: "Real mornings, real comfort",
-    suggestedHook: "Three outfit saves before nursery drop-off.",
-    examplePosts: ["placeholder-1", "placeholder-2"]
+    overlapPct: 83,
+    whyRelevant: "Her audience mirrors the target UK maternity comfort segment with proven click intent.",
+    suggestedIntro: "Morning routine stress test in one pair of leggings.",
+    suggestedMessageDirection: "Confidence + comfort in real school-run context.",
+    examplePosts: [
+      "https://placehold.co/280x160/F8FAFC/0F172A?text=Routine+Look",
+      "https://placehold.co/280x160/F1F5F9/0F172A?text=Try-On"
+    ],
+    audienceHighlights: ["Women 24-36", "UK 72%", "Parents 61%"],
+    contentStyleTags: ["Routine storytelling", "Short-form humor", "Try-on demos"],
+    brandSafetyNotes: ["No sensitive-category violations", "Consistent FTC disclosure history"],
+    priorCollabs: ["ASOS", "H&M", "Boots"],
+    profileUrl: "https://example.com/creator/mina",
+    signals: ["High saves per view", "Comments ask for links", "Low drop-off in first 5 seconds"]
   },
   {
     id: "cr-2",
     name: "Asha Noor",
-    niche: "Body-positive style",
-    vibe: "Premium",
-    fitScore: 91,
-    overlapPct: 78,
+    handle: "@ashastyles",
+    avatarUrl: "https://placehold.co/96x96/FECACA/111827?text=AN",
+    followerRange: "61k",
+    vibeTags: ["Body-positive", "Style-led", "Confident"],
+    fitScore: 92,
     conversionLikelihood: "High",
-    whyMatch: "Consistent conversion lifts on confidence-led fashion recommendations.",
-    signals: ["Audience asks for product links", "High profile tap-through", "Positive sentiment on fit inclusivity"],
-    suggestedAngle: "Confidence without compromise",
-    suggestedHook: "From school run to dinner in one legging.",
-    examplePosts: ["placeholder-3", "placeholder-4"]
+    overlapPct: 79,
+    whyRelevant: "Strong conversion track record on fashion recommendations with high trust in product links.",
+    suggestedIntro: "One product, three confidence-first looks.",
+    suggestedMessageDirection: "Premium comfort without sacrificing style identity.",
+    examplePosts: [
+      "https://placehold.co/280x160/F8FAFC/0F172A?text=Style+Edit",
+      "https://placehold.co/280x160/F1F5F9/0F172A?text=OOTD"
+    ],
+    audienceHighlights: ["Women 25-39", "UK 64%", "Fashion affinity 78%"],
+    contentStyleTags: ["Style transitions", "Product spotlight", "Voiceover education"],
+    brandSafetyNotes: ["Low controversy profile", "Ad disclosure consistent"],
+    priorCollabs: ["M&S", "Zalando", "New Look"],
+    profileUrl: "https://example.com/creator/asha",
+    signals: ["High profile taps", "Strong link CTR", "Positive sentiment in fit comments"]
   },
   {
     id: "cr-3",
     name: "Liv & Theo",
-    niche: "Couple skits",
-    vibe: "Playful",
+    handle: "@livtheo.home",
+    avatarUrl: "https://placehold.co/96x96/BFE3FF/111827?text=LT",
+    followerRange: "54k",
+    vibeTags: ["Playful", "Couple skits", "Lifestyle"],
     fitScore: 89,
-    overlapPct: 75,
     conversionLikelihood: "Med",
-    whyMatch: "Funny day-in-the-life format gives repeatable hooks and broad top-funnel reach.",
-    signals: ["Strong shares on relatable skits", "Repeat branded format success", "Low drop-off in first 5 seconds"],
-    suggestedAngle: "Comfort saves the day",
-    suggestedHook: "When maternity jeans lose and bamboo wins.",
-    examplePosts: ["placeholder-5", "placeholder-6"]
+    overlapPct: 74,
+    whyRelevant: "Strong top-of-funnel shareability and reliable branded content cadence.",
+    suggestedIntro: "When maternity jeans fail at 8am.",
+    suggestedMessageDirection: "Humor-led transition to practical product proof.",
+    examplePosts: [
+      "https://placehold.co/280x160/F8FAFC/0F172A?text=Skit+1",
+      "https://placehold.co/280x160/F1F5F9/0F172A?text=Skit+2"
+    ],
+    audienceHighlights: ["Women 23-34", "UK 69%", "Lifestyle affinity 72%"],
+    contentStyleTags: ["Comedy beats", "Quick cuts", "Partner POV"],
+    brandSafetyNotes: ["Brand-safe language history", "Occasional trend audio risk"],
+    priorCollabs: ["Next", "Primark", "Very"],
+    profileUrl: "https://example.com/creator/liv-theo",
+    signals: ["Share rate above category average", "Fast first-second retention", "Medium click-to-convert"]
   },
   {
     id: "cr-4",
     name: "Erin Wells",
-    niche: "Wellness routines",
-    vibe: "Clinical",
+    handle: "@erin.explains",
+    avatarUrl: "https://placehold.co/96x96/D9F99D/111827?text=EW",
+    followerRange: "39k",
+    vibeTags: ["Educational", "Wellness", "Evidence-led"],
     fitScore: 86,
-    overlapPct: 71,
     conversionLikelihood: "Med",
-    whyMatch: "Her audience values practical product comparisons and routine-led purchase choices.",
-    signals: ["High completion on review content", "Comment quality indicates purchase intent", "Reliable posting cadence"],
-    suggestedAngle: "All-day movement test",
-    suggestedHook: "Can these leggings survive a 12-hour day?",
-    examplePosts: ["placeholder-7", "placeholder-8"]
+    overlapPct: 71,
+    whyRelevant: "High trust with detail-oriented buyers who respond to product comparisons.",
+    suggestedIntro: "Can one legging handle a full-day movement test?",
+    suggestedMessageDirection: "Problem-solution narrative with clear CTA.",
+    examplePosts: [
+      "https://placehold.co/280x160/F8FAFC/0F172A?text=Review+1",
+      "https://placehold.co/280x160/F1F5F9/0F172A?text=Review+2"
+    ],
+    audienceHighlights: ["Women 27-40", "UK 58%", "Wellness affinity 66%"],
+    contentStyleTags: ["Comparison format", "Voiceover explanation", "Routine test"],
+    brandSafetyNotes: ["High compliance consistency", "Lower entertainment-driven shares"],
+    priorCollabs: ["Sweaty Betty", "Lululemon", "MyProtein"],
+    profileUrl: "https://example.com/creator/erin",
+    signals: ["Strong watch-through", "Comment quality indicates intent", "Moderate shareability"]
   },
   {
     id: "cr-5",
-    name: "Nadia C",
-    niche: "Affordable style edits",
-    vibe: "Bold",
+    name: "Nadia Cole",
+    handle: "@nadiaedits",
+    avatarUrl: "https://placehold.co/96x96/F5D0FE/111827?text=NC",
+    followerRange: "43k",
+    vibeTags: ["Bold", "Street-style", "Expressive"],
     fitScore: 84,
-    overlapPct: 69,
     conversionLikelihood: "Med",
-    whyMatch: "Strong engagement among price-conscious buyers and practical wardrobe builders.",
-    signals: ["High saves on budget picks", "Good click-through from stories", "Frequent audience polls"],
-    suggestedAngle: "One item, three looks",
-    suggestedHook: "My week in one pair of leggings.",
-    examplePosts: ["placeholder-9", "placeholder-10"]
+    overlapPct: 68,
+    whyRelevant: "Strong creator style identity with high engagement in lookbook and outfit transition formats.",
+    suggestedIntro: "Three bold looks for one busy day.",
+    suggestedMessageDirection: "Expressive styling with practical comfort payoff.",
+    examplePosts: [
+      "https://placehold.co/280x160/F8FAFC/0F172A?text=Lookbook",
+      "https://placehold.co/280x160/F1F5F9/0F172A?text=Street+Style"
+    ],
+    audienceHighlights: ["Women 21-33", "UK 55%", "Fashion-forward affinity 81%"],
+    contentStyleTags: ["Transition edits", "Voice-led reactions", "Fast trend hooks"],
+    brandSafetyNotes: ["Occasional edgy language", "Needs explicit brand-safe script guidance"],
+    priorCollabs: ["Bershka", "PrettyLittleThing", "ASOS"],
+    profileUrl: "https://example.com/creator/nadia",
+    signals: ["Strong engagement depth", "Mid-tier CTR", "High trend participation"]
   },
   {
     id: "cr-6",
     name: "Jules Meyer",
-    niche: "Parenting vlogs",
-    vibe: "Playful",
+    handle: "@jules.parents",
+    avatarUrl: "https://placehold.co/96x96/FDE68A/111827?text=JM",
+    followerRange: "35k",
+    vibeTags: ["Parenting", "Trust-led", "Routine"],
     fitScore: 82,
-    overlapPct: 67,
     conversionLikelihood: "Low",
-    whyMatch: "Great authenticity and trust, but conversion usually needs stronger CTA support.",
-    signals: ["High comments, lower clicks", "Strong trust cues", "Effective for awareness-to-consideration"],
-    suggestedAngle: "Mum-mode comfort challenge",
-    suggestedHook: "48 hours, one pair, zero wardrobe stress.",
-    examplePosts: ["placeholder-11", "placeholder-12"]
+    overlapPct: 65,
+    whyRelevant: "High trust and authenticity make this creator strong for awareness and mid-funnel consideration.",
+    suggestedIntro: "48 hours in one pair, from nursery drop-off to bedtime.",
+    suggestedMessageDirection: "Routine reliability and practical comfort framing.",
+    examplePosts: [
+      "https://placehold.co/280x160/F8FAFC/0F172A?text=Day+In+Life",
+      "https://placehold.co/280x160/F1F5F9/0F172A?text=Parenting+Routine"
+    ],
+    audienceHighlights: ["Women 25-39", "UK 63%", "Parents 74%"],
+    contentStyleTags: ["Vlog format", "Voice notes", "Routine checklists"],
+    brandSafetyNotes: ["Very brand-safe content history", "Lower historical conversion intensity"],
+    priorCollabs: ["Mamas & Papas", "Mothercare", "Boots"],
+    profileUrl: "https://example.com/creator/jules",
+    signals: ["High comment trust", "Lower link clicks", "Good retention in day-in-life"]
   }
 ];
-
-export const report: CampaignReport = {
-  narrative: {
-    predictedVsActual:
-      "Predicted performance held: creator mix reached target UK mothers efficiently, with slightly higher engagement than expected.",
-    whatWorked:
-      "Relatable hooks and confidence-led framing drove saves and link-click momentum in week 2.",
-    whatToChange:
-      "Tighten creator CTA language and add one explicit offer-led variant earlier in flight."
-  },
-  metrics: {
-    spendUsed: "GBP 9.6k / 12k",
-    reach: "332k",
-    engagementRate: "7.1%",
-    saves: "8,940",
-    ctr: "2.9%",
-    conversions: "412",
-    sentimentShift: "Up"
-  },
-  creatorComparison: [
-    { creator: "Mina Harper", reach: "124k", ctr: "3.3%", conversions: "182" },
-    { creator: "Asha Noor", reach: "98k", ctr: "3.0%", conversions: "141" },
-    { creator: "Liv & Theo", reach: "110k", ctr: "2.1%", conversions: "89" }
-  ],
-  recommendations: [
-    "Keep playful tone, but standardize CTA to one purchase action.",
-    "Prioritize creators with high save-rate + strong comment intent overlap.",
-    "Run a 7-day retargeting burst with top two hooks before next launch."
-  ]
-};
-
-const audienceRecommendationByGoal: Record<CampaignGoal, string> = {
-  Sales: "Prioritize high-intent mums actively comparing comfortwear options.",
-  Awareness: "Expand into adjacent parenting and lifestyle audiences for efficient reach.",
-  UGC: "Select creators with repeatable formats and reliable delivery cadence.",
-  "Retail footfall": "Focus on local-city creators with strong location-specific response."
-};
-
-const archetypeByVibe: Record<Positioning, string> = {
-  Premium: "Editorial confidence creators with polished product storytelling.",
-  Playful: "Relatable routine creators who blend humor with practical proof.",
-  Clinical: "Evidence-first explainers who can simplify product claims.",
-  Bold: "High-energy creators who can create immediate scroll-stop attention."
-};
-
-export const buildInterpretation = (params: {
-  positioning: Positioning;
-  audience: AudienceType;
-  goal: CampaignGoal;
-  launch: string;
-}): string[] => {
-  return [
-    `Positioning signal: ${params.positioning} tone should lead the opening hook in every script.`,
-    `Audience recommendation: ${audienceRecommendationByGoal[params.goal]}`,
-    `Messaging pillar: connect ${params.launch.toLowerCase()} to daily comfort and confidence moments.`,
-    `Creator archetype: ${archetypeByVibe[params.positioning]}`,
-    `Delivery guardrail: keep first 3 seconds benefit-led for ${params.audience.toLowerCase()} targeting.`
-  ];
-};
 
 export const buildOutreachDrafts = (
   selectedCreators: CreatorRecommendation[],
@@ -320,52 +563,92 @@ export const buildOutreachDrafts = (
 ): OutreachDraft[] => {
   const targets = selectedCreators.slice(0, 4);
   return targets.map((creator) => {
-    const opener = options.autoPersonalize
-      ? `Hi ${creator.name} - your ${creator.niche.toLowerCase()} content is a strong fit for this campaign.`
-      : `Hi ${creator.name} - we are inviting a small creator group for a new campaign.`;
-
-    const message = [
-      opener,
-      `Campaign objective: ${brief.objective}`,
-      `Suggested angle: ${creator.suggestedAngle}. Hook: ${creator.suggestedHook}`,
-      `Deliverables: ${brief.deliverables.join(", ")}. Timeline: ${brief.timeline}.`,
-      "If this feels aligned, we can confirm details today."
-    ].join("\n\n");
+    const intro = options.autoPersonalize
+      ? `Hi ${creator.name}, your ${creator.vibeTags[0].toLowerCase()} content style is a strong fit for ${brief.campaignName}.`
+      : `Hi ${creator.name}, we'd love to include you in ${brief.campaignName}.`;
 
     return {
       creatorId: creator.id,
       creatorName: creator.name,
-      message
+      message: [
+        intro,
+        `Suggested intro: ${creator.suggestedIntro}`,
+        `Message direction: ${creator.suggestedMessageDirection}`,
+        `Deliverables: ${brief.deliverables}`,
+        `Timeline: ${brief.timeline}. Usage rights: ${brief.usageRights}.`,
+        "If this fits your schedule, we can share final script notes today."
+      ].join("\n\n")
     };
   });
 };
 
+export const baseReport: CampaignReport = {
+  summary:
+    "Campaign pacing is healthy: creator mix delivered strong saves and efficient click quality while staying under budget.",
+  whatToDoNext: [
+    "Increase spend on top two creators for week-3 retargeting.",
+    "Standardize CTA language across all story frames.",
+    "Reuse highest-saving creative in paid social cutdowns."
+  ],
+  metrics: {
+    spend: "GBP 9,600",
+    budgetUsedPct: "80%",
+    impressions: "690k",
+    reach: "338k",
+    engagementRate: "7.2%",
+    saves: "9,120",
+    ctr: "2.9%",
+    linkClicks: "9,620",
+    conversions: "428",
+    cpa: "GBP 22.43",
+    cpm: "GBP 13.91",
+    sentimentShift: "Up"
+  },
+  chartSeries: {
+    spendVsBudget: [
+      { label: "Budget", value: 12000 },
+      { label: "Spend", value: 9600 }
+    ],
+    performanceByWeek: [
+      { label: "Week 1", reach: 94000, engagement: 5.8 },
+      { label: "Week 2", reach: 122000, engagement: 7.4 },
+      { label: "Week 3", reach: 122000, engagement: 8.1 }
+    ]
+  },
+  creatorComparison: [
+    { creator: "Mina Harper", reach: "126k", engagementRate: "8.2%", ctr: "3.4%", conversions: "188" },
+    { creator: "Asha Noor", reach: "102k", engagementRate: "7.0%", ctr: "3.0%", conversions: "149" },
+    { creator: "Liv & Theo", reach: "110k", engagementRate: "6.2%", ctr: "2.2%", conversions: "91" }
+  ],
+  recommendations: [
+    "Scale relatable routine creators before adding more top-funnel talent.",
+    "Test one offer-led creative variant in first 5 seconds.",
+    "Expand lookalike audience once conversion consistency holds for 5 days."
+  ]
+};
+
 export const buildReportFromSelection = (selectedCreators: CreatorRecommendation[]): CampaignReport => {
   const chosen = selectedCreators.length > 0 ? selectedCreators.slice(0, 3) : creators.slice(0, 3);
-  const reachBase = 290000 + chosen.length * 14000;
-  const conversionsBase = 300 + chosen.length * 34;
+  const estimatedReach = 300000 + chosen.length * 14000;
+  const estimatedClicks = 7800 + chosen.length * 600;
+  const estimatedConversions = 340 + chosen.length * 30;
 
   return {
-    ...report,
-    narrative: {
-      predictedVsActual: `Predicted vs Actual: the selected ${chosen.length}-creator mix delivered stable efficiency with stronger-than-expected saves.`,
-      whatWorked: "Creator hooks tied product comfort to real routines, boosting click intent.",
-      whatToChange: "Add one offer-led variant in week 1 and tighten story-frame CTA sequencing."
-    },
+    ...baseReport,
+    summary:
+      `Performance is tracking above plan for the selected ${chosen.length}-creator mix, with stronger save-to-click behavior than expected.`,
     metrics: {
-      spendUsed: "GBP 9.6k / 12k",
-      reach: `${reachBase.toLocaleString()}`,
-      engagementRate: "7.0%",
-      saves: `${(8200 + chosen.length * 360).toLocaleString()}`,
-      ctr: "2.8%",
-      conversions: `${conversionsBase}`,
-      sentimentShift: "Up"
+      ...baseReport.metrics,
+      reach: `${estimatedReach.toLocaleString()}`,
+      linkClicks: `${estimatedClicks.toLocaleString()}`,
+      conversions: `${estimatedConversions}`
     },
     creatorComparison: chosen.map((creator, index) => ({
       creator: creator.name,
-      reach: `${(95000 - index * 12000).toLocaleString()}`,
-      ctr: index === 0 ? "3.2%" : index === 1 ? "2.9%" : "2.4%",
-      conversions: `${160 - index * 37}`
+      reach: `${(116000 - index * 12000).toLocaleString()}`,
+      engagementRate: index === 0 ? "8.0%" : index === 1 ? "7.1%" : "6.2%",
+      ctr: index === 0 ? "3.3%" : index === 1 ? "2.9%" : "2.4%",
+      conversions: `${176 - index * 42}`
     }))
   };
 };

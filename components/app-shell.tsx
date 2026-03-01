@@ -11,12 +11,12 @@ type AppShellProps = {
 };
 
 const flowSteps = [
-  { href: "/brand/onboarding", label: "Brand Memory", step: 1 },
-  { href: "/campaign/new", label: "Intake", step: 2 },
+  { href: "/brand/onboarding", label: "Brand Brief", step: 1 },
+  { href: "/campaign/new", label: "Campaign Create", step: 2 },
   { href: "/campaign/plan", label: "Plan", step: 3 },
-  { href: "/campaign/match", label: "Match", step: 4 },
+  { href: "/campaign/match", label: "Creators", step: 4 },
   { href: "/campaign/operator", label: "Operator", step: 5 },
-  { href: "/campaign/report", label: "Report", step: 6 }
+  { href: "/campaign/report", label: "Dashboard", step: 6 }
 ];
 
 const getProgress = (pathname: string) => {
@@ -43,7 +43,7 @@ export const AppShell = ({ children }: AppShellProps) => {
         <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
           <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-4">
             <Link href="/" className="text-xl font-semibold tracking-tight text-ink">
-              Agora Operator
+              Influence AI
             </Link>
             <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 md:px-4 md:py-2 md:text-sm">
               Step {progress.step}/6 · {progress.label}

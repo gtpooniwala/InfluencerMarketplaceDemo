@@ -1,33 +1,29 @@
 import { ReactNode } from "react";
-import { AudienceType, CampaignGoal, IntakeAnswers, Positioning, audienceOptions, goalOptions, positioningOptions } from "@/lib/mockData";
+import {
+  IntakeAnswers,
+  audienceOptions,
+  contextActions,
+  launchOptions,
+  successOptions,
+  vibeOptions
+} from "@/lib/mockData";
 
 type ChatPanelProps = {
   intake: IntakeAnswers;
-  onSelect: <K extends "launch" | "vibe" | "goal" | "audience">(field: K, value: IntakeAnswers[K]) => void;
-  onUploadContext: (label: string) => void;
+  onSelect: <K extends "launchType" | "successGoal" | "audienceType" | "vibe">(field: K, value: IntakeAnswers[K]) => void;
   onUseSampleContext: () => void;
+  onUploadContext: (label: string) => void;
+  contextOpen: boolean;
+  onToggleContextOpen: () => void;
 };
 
-const launchOptions = [
-  "Bamboo maternity leggings",
-  "Nursing tees and lounge set",
-  "Postpartum comfort bundle"
-] as const;
-
-const uploadActions = [
-  "Paste Canva link",
-  "Upload pitch deck",
-  "Upload meeting transcript",
-  "Upload product images"
-] as const;
-
-const ChipButton = ({
-  active,
+const Chip = ({
   label,
+  active,
   onClick
 }: {
-  active?: boolean;
   label: string;
+  active: boolean;
   onClick: () => void;
 }) => (
   <button
@@ -41,91 +37,94 @@ const ChipButton = ({
   </button>
 );
 
-const PromptBlock = ({
-  prompt,
-  children
-}: {
-  prompt: string;
-  children: ReactNode;
-}) => (
-  <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-    <p className="text-sm font-semibold text-slate-900">{prompt}</p>
+const QuestionBlock = ({ title, children }: { title: string; children: ReactNode }) => (
+  <article className="rounded-2xl border border-slate-200 bg-white p-4">
+    <p className="text-sm font-semibold text-slate-900">{title}</p>
     <div className="mt-3 flex flex-wrap gap-2">{children}</div>
   </article>
 );
 
-export const ChatPanel = ({ intake, onSelect, onUploadContext, onUseSampleContext }: ChatPanelProps) => {
+export const ChatPanel = ({
+  intake,
+  onSelect,
+  onUseSampleContext,
+  onUploadContext,
+  contextOpen,
+  onToggleContextOpen
+}: ChatPanelProps) => {
   return (
     <section className="demo-card space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-ink">Conversational intake</h2>
-        <p className="mt-1 text-sm text-slate-600">No form-filling needed. Tap quick replies to shape the campaign.</p>
+        <h2 className="text-xl font-semibold text-ink">Campaign starter</h2>
+        <p className="mt-1 text-sm text-slate-600">Answer four quick prompts. We will draft the brief for you.</p>
       </div>
 
-      <button type="button" onClick={onUseSampleContext} className="btn-secondary w-full">
-        Use sample context
+      <button type="button" className="btn-secondary w-full" onClick={onUseSampleContext}>
+        Use sample campaign
       </button>
 
-      <PromptBlock prompt="What are you launching?">
+      <QuestionBlock title="1) What are you launching?">
         {launchOptions.map((option) => (
-          <ChipButton
+          <Chip
             key={option}
             label={option}
-            active={intake.launch === option}
-            onClick={() => onSelect("launch", option)}
+            active={intake.launchType === option}
+            onClick={() => onSelect("launchType", option)}
           />
         ))}
-      </PromptBlock>
+      </QuestionBlock>
 
-      <PromptBlock prompt="What’s the vibe?">
-        {positioningOptions.map((option: Positioning) => (
-          <ChipButton
+      <QuestionBlock title="2) What does success look like?">
+        {successOptions.map((option) => (
+          <Chip
             key={option}
             label={option}
-            active={intake.vibe === option}
-            onClick={() => onSelect("vibe", option)}
+            active={intake.successGoal === option}
+            onClick={() => onSelect("successGoal", option)}
           />
         ))}
-      </PromptBlock>
+      </QuestionBlock>
 
-      <PromptBlock prompt="Goal?">
-        {goalOptions.map((option: CampaignGoal) => (
-          <ChipButton
+      <QuestionBlock title="3) Who is this for?">
+        {audienceOptions.map((option) => (
+          <Chip
             key={option}
             label={option}
-            active={intake.goal === option}
-            onClick={() => onSelect("goal", option)}
+            active={intake.audienceType === option}
+            onClick={() => onSelect("audienceType", option)}
           />
         ))}
-      </PromptBlock>
+      </QuestionBlock>
 
-      <PromptBlock prompt="Existing vs new audience?">
-        {audienceOptions.map((option: AudienceType) => (
-          <ChipButton
-            key={option}
-            label={option}
-            active={intake.audience === option}
-            onClick={() => onSelect("audience", option)}
-          />
+      <QuestionBlock title="4) What’s the vibe?">
+        {vibeOptions.map((option) => (
+          <Chip key={option} label={option} active={intake.vibe === option} onClick={() => onSelect("vibe", option)} />
         ))}
-      </PromptBlock>
+      </QuestionBlock>
 
-      <PromptBlock prompt="Upload context">
-        {uploadActions.map((action) => (
-          <ChipButton key={action} label={action} onClick={() => onUploadContext(action)} />
-        ))}
-      </PromptBlock>
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+        <button type="button" onClick={onToggleContextOpen} className="w-full text-left text-sm font-semibold text-slate-800">
+          Add context {contextOpen ? "-" : "+"}
+        </button>
 
-      {intake.contextSources.length > 0 && (
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-          <p className="font-semibold uppercase tracking-wide text-slate-500">Context loaded</p>
-          <ul className="mt-2 list-disc space-y-1 pl-4">
-            {intake.contextSources.map((item) => (
-              <li key={item}>{item}</li>
+        {contextOpen && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {contextActions.map((action) => (
+              <button key={action} type="button" className="btn-secondary" onClick={() => onUploadContext(action)}>
+                {action}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {intake.contextSources.length > 0 && (
+          <ul className="mt-3 list-disc space-y-1 pl-4 text-xs text-slate-600">
+            {intake.contextSources.map((source) => (
+              <li key={source}>{source}</li>
             ))}
           </ul>
-        </div>
-      )}
+        )}
+      </section>
     </section>
   );
 };

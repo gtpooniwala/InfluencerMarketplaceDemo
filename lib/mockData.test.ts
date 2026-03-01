@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
-  buildInterpretation,
+  brandMemory,
+  buildBrandBrief,
+  buildCampaignBriefFromIntake,
+  buildCampaignPlan,
   buildOutreachDrafts,
   buildReportFromSelection,
-  campaignBrief,
-  creators
+  creators,
+  sampleContext
 } from "@/lib/mockData";
 
 describe("mockData deterministic behavior", () => {
@@ -12,39 +15,51 @@ describe("mockData deterministic behavior", () => {
     expect(creators.length).toBeLessThanOrEqual(6);
   });
 
-  it("builds deterministic interpretation bullets", () => {
-    const first = buildInterpretation({
-      positioning: "Playful",
-      audience: "New audience",
-      goal: "Sales",
-      launch: "Bamboo maternity leggings"
-    });
-    const second = buildInterpretation({
-      positioning: "Playful",
-      audience: "New audience",
-      goal: "Sales",
-      launch: "Bamboo maternity leggings"
-    });
-
+  it("builds deterministic brand brief", () => {
+    const first = buildBrandBrief(brandMemory);
+    const second = buildBrandBrief(brandMemory);
     expect(first).toEqual(second);
-    expect(first.length).toBeGreaterThanOrEqual(3);
+    expect(first.doGuidelines.length).toBeGreaterThan(0);
   });
 
-  it("generates stable outreach drafts for selected creators", () => {
-    const selected = creators.slice(0, 3);
-    const first = buildOutreachDrafts(selected, campaignBrief, { autoPersonalize: true });
-    const second = buildOutreachDrafts(selected, campaignBrief, { autoPersonalize: true });
+  it("builds deterministic campaign brief and plan", () => {
+    const intake = {
+      launchType: sampleContext.launchType,
+      successGoal: sampleContext.successGoal,
+      audienceType: sampleContext.audienceType,
+      vibe: sampleContext.vibe,
+      contextSources: [...sampleContext.contextSources]
+    };
 
-    expect(first).toEqual(second);
-    expect(first).toHaveLength(3);
-    expect(first[0].message).toContain(selected[0].name);
+    const briefA = buildCampaignBriefFromIntake(intake, brandMemory);
+    const briefB = buildCampaignBriefFromIntake(intake, brandMemory);
+    expect(briefA).toEqual(briefB);
+
+    const planA = buildCampaignPlan(briefA, intake.vibe);
+    const planB = buildCampaignPlan(briefA, intake.vibe);
+    expect(planA).toEqual(planB);
+    expect(planA.messagingPillars).toHaveLength(3);
   });
 
-  it("builds deterministic report from selection", () => {
+  it("generates stable outreach drafts and report", () => {
     const selected = creators.slice(0, 3);
+    const brief = buildCampaignBriefFromIntake(
+      {
+        launchType: sampleContext.launchType,
+        successGoal: sampleContext.successGoal,
+        audienceType: sampleContext.audienceType,
+        vibe: sampleContext.vibe,
+        contextSources: [...sampleContext.contextSources]
+      },
+      brandMemory
+    );
+
+    const draftsA = buildOutreachDrafts(selected, brief, { autoPersonalize: true });
+    const draftsB = buildOutreachDrafts(selected, brief, { autoPersonalize: true });
+    expect(draftsA).toEqual(draftsB);
+
     const reportA = buildReportFromSelection(selected);
     const reportB = buildReportFromSelection(selected);
-
     expect(reportA).toEqual(reportB);
     expect(reportA.creatorComparison).toHaveLength(3);
   });
