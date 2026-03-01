@@ -25,7 +25,7 @@ export const CreatorTile = ({ creator, selected, active, onSelect, onOpen, onDra
             <h3 className="text-base font-semibold text-ink">{creator.name}</h3>
             <p className="text-sm text-slate-600">{creator.handle} · {creator.followerRange}</p>
             <div className="mt-1 flex flex-wrap gap-1">
-              {creator.vibeTags.slice(0, 3).map((tag) => (
+              {creator.categories.slice(0, 3).map((tag) => (
                 <span key={tag} className="rounded-full border border-slate-200 px-2 py-0.5 text-[11px] text-slate-600">
                   {tag}
                 </span>
@@ -36,14 +36,27 @@ export const CreatorTile = ({ creator, selected, active, onSelect, onOpen, onDra
         <span className={`rounded-xl px-3 py-1 text-sm font-semibold ${scoreClass(creator.fitScore)}`}>Fit {creator.fitScore}</span>
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2">
-        {creator.examplePosts.slice(0, 2).map((post) => (
-          <img key={post} src={post} alt="Creator sample" className="h-20 w-full rounded-lg border border-slate-200 object-cover" />
+      <div className="mt-3 space-y-2">
+        <img src={creator.examplePosts[0]} alt={`${creator.name} content preview`} className="h-36 w-full rounded-xl border border-slate-200 object-cover" />
+        <div className="grid grid-cols-2 gap-2">
+          {creator.examplePosts.slice(1, 3).map((post) => (
+            <img key={post} src={post} alt={`${creator.name} sample`} className="h-20 w-full rounded-lg border border-slate-200 object-cover" />
+          ))}
+        </div>
+      </div>
+
+      <p className="mt-3 text-xs text-slate-500">{creator.demographicSummary}</p>
+      <p className="mt-1 text-sm font-medium text-slate-700">{creator.aiSummary}</p>
+
+      <div className="mt-2 flex flex-wrap gap-1">
+        {creator.hashtags.slice(0, 3).map((tag) => (
+          <span key={tag} className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-600">
+            {tag}
+          </span>
         ))}
       </div>
 
-      <p className="mt-3 text-sm font-medium text-slate-700">Why relevant? {creator.whyRelevant}</p>
-      <p className="mt-1 text-xs text-slate-500">Audience overlap {creator.overlapPct}% · Conversion likelihood {creator.conversionLikelihood}</p>
+      <p className="mt-2 text-xs text-slate-500">Audience overlap {creator.overlapPct}% · Conversion likelihood {creator.conversionLikelihood}</p>
 
       <div className="mt-4 flex flex-wrap gap-2">
         <button type="button" className="btn-secondary" onClick={onOpen}>

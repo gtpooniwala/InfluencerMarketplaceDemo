@@ -26,7 +26,17 @@ export const OutreachReviewModal = ({ open, drafts, onClose, onSend }: OutreachR
           {drafts.slice(0, 4).map((draft) => (
             <article key={draft.creatorId} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
               <p className="text-sm font-semibold text-slate-900">{draft.creatorName}</p>
-              <pre className="mt-2 whitespace-pre-wrap text-xs text-slate-700">{draft.message}</pre>
+              <div className="mt-2 rounded-lg border border-slate-200 bg-white p-2 text-xs text-slate-600">
+                <p className="font-semibold text-slate-700">AI suggestions</p>
+                <p className="mt-1">Suggested intro: {draft.suggestedIntro ?? "Use the campaign headline naturally."}</p>
+                <p className="mt-1">Suggested message direction: {draft.suggestedMessageDirection ?? "Lead with clear product value and CTA."}</p>
+              </div>
+              <textarea
+                readOnly
+                value={draft.message}
+                className="mt-2 min-h-36 w-full rounded-lg border border-slate-200 bg-white p-2 text-xs text-slate-700"
+                aria-label={`${draft.creatorName} outreach message`}
+              />
             </article>
           ))}
         </div>

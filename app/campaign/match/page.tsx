@@ -30,15 +30,15 @@ export default function CampaignMatchPage() {
   const matchInterpretation = useMemo(() => {
     if (!activeCreator) {
       return [
-        "Operator recommendation: start with top-fit creators and one creative wildcard for testing.",
+        "AI recommendation: start with top-fit creators, then add one creative wildcard for testing.",
         "Use bulk outreach after selecting 3-4 creators for faster launch."
       ];
     }
 
     return [
-      `Why they're a fit: ${activeCreator.whyRelevant}`,
-      `Suggested intro: ${activeCreator.suggestedIntro}`,
-      `Suggested message direction: ${activeCreator.suggestedMessageDirection}`
+      `Why they are a fit: ${activeCreator.whyRelevant}`,
+      `Campaign fit summary: ${activeCreator.aiSummary}`,
+      `Commercial guide: ${activeCreator.outreachSize} at ${activeCreator.pricing}.`
     ];
   }, [activeCreator]);
 
@@ -62,11 +62,12 @@ export default function CampaignMatchPage() {
         outreachDrafts: selectedCreators.slice(0, 4).map((creator) => ({
           creatorId: creator.id,
           creatorName: creator.name,
+          suggestedIntro: creator.suggestedIntro,
+          suggestedMessageDirection: creator.suggestedMessageDirection,
           message: [
             `Hi ${creator.name}, we are inviting you to ${prev.brief.campaignName || "this campaign"}.`,
-            `Suggested intro: ${creator.suggestedIntro}`,
-            `Suggested message direction: ${creator.suggestedMessageDirection}`,
             `Deliverables: ${prev.brief.deliverables || "Creator post + story support"}.`,
+            `Timeline: ${prev.brief.timeline || "3 weeks"}. Usage rights: ${prev.brief.usageRights || "Paid social amplification rights for 30 days"}.`,
             "If this aligns, we can share final details today."
           ].join("\n\n")
         }))
@@ -89,7 +90,7 @@ export default function CampaignMatchPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-3xl font-semibold tracking-tight text-ink">Recommended creators</h1>
-            <p className="mt-1 text-sm text-slate-600">Review content style, fit rationale, and message direction before outreach.</p>
+            <p className="mt-1 text-sm text-slate-600">Browse creator content, audience fit, and pricing before sending outreach.</p>
           </div>
           <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm text-slate-600">
             {state.selectedCreatorIds.length} selected
@@ -140,7 +141,7 @@ export default function CampaignMatchPage() {
 
         <section className="space-y-4">
           <CreatorDetails creator={activeCreator} />
-          <InterpretationBox title="Operator recommendation" bullets={matchInterpretation} />
+          <InterpretationBox title="AI recommendation" bullets={matchInterpretation} />
         </section>
       </div>
 

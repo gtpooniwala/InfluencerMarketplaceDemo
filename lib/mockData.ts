@@ -90,6 +90,10 @@ export type CreatorRecommendation = {
   handle: string;
   avatarUrl: string;
   followerRange: string;
+  categories: string[];
+  hashtags: string[];
+  demographicSummary: string;
+  aiSummary: string;
   vibeTags: string[];
   fitScore: number;
   conversionLikelihood: "Low" | "Med" | "High";
@@ -102,6 +106,8 @@ export type CreatorRecommendation = {
   contentStyleTags: string[];
   brandSafetyNotes: string[];
   priorCollabs: string[];
+  outreachSize: string;
+  pricing: string;
   profileUrl: string;
   signals: string[];
 };
@@ -109,6 +115,8 @@ export type CreatorRecommendation = {
 export type OutreachDraft = {
   creatorId: string;
   creatorName: string;
+  suggestedIntro?: string;
+  suggestedMessageDirection?: string;
   message: string;
 };
 
@@ -439,8 +447,12 @@ export const creators: CreatorRecommendation[] = [
     id: "cr-1",
     name: "Mina Harper",
     handle: "@mina.mornings",
-    avatarUrl: "https://placehold.co/96x96/FDE68A/111827?text=MH",
+    avatarUrl: "https://i.pravatar.cc/160?img=32",
     followerRange: "48k",
+    categories: ["Maternity style", "Daily routines", "Parenting"],
+    hashtags: ["#maternitystyle", "#mumlife", "#everydayoutfits"],
+    demographicSummary: "Women 24-36, UK-heavy, parent-led audience.",
+    aiSummary: "Trusted for practical morning-routine content that drives link clicks from high-intent parents.",
     vibeTags: ["Relatable", "Mum-life", "Warm humor"],
     fitScore: 95,
     conversionLikelihood: "High",
@@ -449,13 +461,17 @@ export const creators: CreatorRecommendation[] = [
     suggestedIntro: "Morning routine stress test in one pair of leggings.",
     suggestedMessageDirection: "Confidence + comfort in real school-run context.",
     examplePosts: [
-      "https://placehold.co/280x160/F8FAFC/0F172A?text=Routine+Look",
-      "https://placehold.co/280x160/F1F5F9/0F172A?text=Try-On"
+      "https://picsum.photos/id/1027/900/600",
+      "https://picsum.photos/id/1062/900/600",
+      "https://picsum.photos/id/1011/900/600",
+      "https://picsum.photos/id/1005/900/600"
     ],
     audienceHighlights: ["Women 24-36", "UK 72%", "Parents 61%"],
     contentStyleTags: ["Routine storytelling", "Short-form humor", "Try-on demos"],
     brandSafetyNotes: ["No sensitive-category violations", "Consistent FTC disclosure history"],
     priorCollabs: ["ASOS", "H&M", "Boots"],
+    outreachSize: "1 video + 3 stories + usage rights",
+    pricing: "GBP 1,100-1,400 package",
     profileUrl: "https://example.com/creator/mina",
     signals: ["High saves per view", "Comments ask for links", "Low drop-off in first 5 seconds"]
   },
@@ -463,8 +479,12 @@ export const creators: CreatorRecommendation[] = [
     id: "cr-2",
     name: "Asha Noor",
     handle: "@ashastyles",
-    avatarUrl: "https://placehold.co/96x96/FECACA/111827?text=AN",
+    avatarUrl: "https://i.pravatar.cc/160?img=47",
     followerRange: "61k",
+    categories: ["Body-positive fashion", "Style edits", "Try-ons"],
+    hashtags: ["#maternityfashion", "#ootd", "#styleinspo"],
+    demographicSummary: "Women 25-39, fashion-forward UK metro mix.",
+    aiSummary: "Consistently converts style content into purchases with clear recommendation-first storytelling.",
     vibeTags: ["Body-positive", "Style-led", "Confident"],
     fitScore: 92,
     conversionLikelihood: "High",
@@ -473,13 +493,17 @@ export const creators: CreatorRecommendation[] = [
     suggestedIntro: "One product, three confidence-first looks.",
     suggestedMessageDirection: "Premium comfort without sacrificing style identity.",
     examplePosts: [
-      "https://placehold.co/280x160/F8FAFC/0F172A?text=Style+Edit",
-      "https://placehold.co/280x160/F1F5F9/0F172A?text=OOTD"
+      "https://picsum.photos/id/823/900/600",
+      "https://picsum.photos/id/1025/900/600",
+      "https://picsum.photos/id/1021/900/600",
+      "https://picsum.photos/id/1012/900/600"
     ],
     audienceHighlights: ["Women 25-39", "UK 64%", "Fashion affinity 78%"],
     contentStyleTags: ["Style transitions", "Product spotlight", "Voiceover education"],
     brandSafetyNotes: ["Low controversy profile", "Ad disclosure consistent"],
     priorCollabs: ["M&S", "Zalando", "New Look"],
+    outreachSize: "2 videos + 2 story sets + 30-day usage",
+    pricing: "GBP 1,400-1,800 package",
     profileUrl: "https://example.com/creator/asha",
     signals: ["High profile taps", "Strong link CTR", "Positive sentiment in fit comments"]
   },
@@ -487,8 +511,12 @@ export const creators: CreatorRecommendation[] = [
     id: "cr-3",
     name: "Liv & Theo",
     handle: "@livtheo.home",
-    avatarUrl: "https://placehold.co/96x96/BFE3FF/111827?text=LT",
+    avatarUrl: "https://i.pravatar.cc/160?img=66",
     followerRange: "54k",
+    categories: ["Couple comedy", "Lifestyle", "Home routines"],
+    hashtags: ["#couplecontent", "#familylife", "#reallifehumor"],
+    demographicSummary: "Women 23-34, UK couples and family audience.",
+    aiSummary: "Excellent for upper-funnel reach and shareability with playful content that still lands product proof.",
     vibeTags: ["Playful", "Couple skits", "Lifestyle"],
     fitScore: 89,
     conversionLikelihood: "Med",
@@ -497,13 +525,17 @@ export const creators: CreatorRecommendation[] = [
     suggestedIntro: "When maternity jeans fail at 8am.",
     suggestedMessageDirection: "Humor-led transition to practical product proof.",
     examplePosts: [
-      "https://placehold.co/280x160/F8FAFC/0F172A?text=Skit+1",
-      "https://placehold.co/280x160/F1F5F9/0F172A?text=Skit+2"
+      "https://picsum.photos/id/1014/900/600",
+      "https://picsum.photos/id/1019/900/600",
+      "https://picsum.photos/id/1020/900/600",
+      "https://picsum.photos/id/1037/900/600"
     ],
     audienceHighlights: ["Women 23-34", "UK 69%", "Lifestyle affinity 72%"],
     contentStyleTags: ["Comedy beats", "Quick cuts", "Partner POV"],
     brandSafetyNotes: ["Brand-safe language history", "Occasional trend audio risk"],
     priorCollabs: ["Next", "Primark", "Very"],
+    outreachSize: "1 video + 2 stories",
+    pricing: "GBP 900-1,200 package",
     profileUrl: "https://example.com/creator/liv-theo",
     signals: ["Share rate above category average", "Fast first-second retention", "Medium click-to-convert"]
   },
@@ -511,8 +543,12 @@ export const creators: CreatorRecommendation[] = [
     id: "cr-4",
     name: "Erin Wells",
     handle: "@erin.explains",
-    avatarUrl: "https://placehold.co/96x96/D9F99D/111827?text=EW",
+    avatarUrl: "https://i.pravatar.cc/160?img=20",
     followerRange: "39k",
+    categories: ["Wellness education", "Product reviews", "Fit testing"],
+    hashtags: ["#productreview", "#wellnesstips", "#maternityadvice"],
+    demographicSummary: "Women 27-40, UK wellness and research-led shoppers.",
+    aiSummary: "High-trust educational format that helps skeptical buyers move from consideration to click.",
     vibeTags: ["Educational", "Wellness", "Evidence-led"],
     fitScore: 86,
     conversionLikelihood: "Med",
@@ -521,13 +557,17 @@ export const creators: CreatorRecommendation[] = [
     suggestedIntro: "Can one legging handle a full-day movement test?",
     suggestedMessageDirection: "Problem-solution narrative with clear CTA.",
     examplePosts: [
-      "https://placehold.co/280x160/F8FAFC/0F172A?text=Review+1",
-      "https://placehold.co/280x160/F1F5F9/0F172A?text=Review+2"
+      "https://picsum.photos/id/1013/900/600",
+      "https://picsum.photos/id/1024/900/600",
+      "https://picsum.photos/id/1001/900/600",
+      "https://picsum.photos/id/1018/900/600"
     ],
     audienceHighlights: ["Women 27-40", "UK 58%", "Wellness affinity 66%"],
     contentStyleTags: ["Comparison format", "Voiceover explanation", "Routine test"],
     brandSafetyNotes: ["High compliance consistency", "Lower entertainment-driven shares"],
     priorCollabs: ["Sweaty Betty", "Lululemon", "MyProtein"],
+    outreachSize: "1 review video + 1 story follow-up",
+    pricing: "GBP 800-1,050 package",
     profileUrl: "https://example.com/creator/erin",
     signals: ["Strong watch-through", "Comment quality indicates intent", "Moderate shareability"]
   },
@@ -535,8 +575,12 @@ export const creators: CreatorRecommendation[] = [
     id: "cr-5",
     name: "Nadia Cole",
     handle: "@nadiaedits",
-    avatarUrl: "https://placehold.co/96x96/F5D0FE/111827?text=NC",
+    avatarUrl: "https://i.pravatar.cc/160?img=5",
     followerRange: "43k",
+    categories: ["Street-style", "Trend edits", "Fashion transitions"],
+    hashtags: ["#streetstyle", "#fashiontok", "#outfitideas"],
+    demographicSummary: "Women 21-33, trend-led urban audience.",
+    aiSummary: "Strong style authority and visual pace for awareness + saves among fashion-first shoppers.",
     vibeTags: ["Bold", "Street-style", "Expressive"],
     fitScore: 84,
     conversionLikelihood: "Med",
@@ -545,13 +589,17 @@ export const creators: CreatorRecommendation[] = [
     suggestedIntro: "Three bold looks for one busy day.",
     suggestedMessageDirection: "Expressive styling with practical comfort payoff.",
     examplePosts: [
-      "https://placehold.co/280x160/F8FAFC/0F172A?text=Lookbook",
-      "https://placehold.co/280x160/F1F5F9/0F172A?text=Street+Style"
+      "https://picsum.photos/id/1016/900/600",
+      "https://picsum.photos/id/1022/900/600",
+      "https://picsum.photos/id/1035/900/600",
+      "https://picsum.photos/id/1038/900/600"
     ],
     audienceHighlights: ["Women 21-33", "UK 55%", "Fashion-forward affinity 81%"],
     contentStyleTags: ["Transition edits", "Voice-led reactions", "Fast trend hooks"],
     brandSafetyNotes: ["Occasional edgy language", "Needs explicit brand-safe script guidance"],
     priorCollabs: ["Bershka", "PrettyLittleThing", "ASOS"],
+    outreachSize: "1 trend video + 3-frame story set",
+    pricing: "GBP 950-1,250 package",
     profileUrl: "https://example.com/creator/nadia",
     signals: ["Strong engagement depth", "Mid-tier CTR", "High trend participation"]
   },
@@ -559,8 +607,12 @@ export const creators: CreatorRecommendation[] = [
     id: "cr-6",
     name: "Jules Meyer",
     handle: "@jules.parents",
-    avatarUrl: "https://placehold.co/96x96/FDE68A/111827?text=JM",
+    avatarUrl: "https://i.pravatar.cc/160?img=37",
     followerRange: "35k",
+    categories: ["Parenting routines", "Family vlogs", "Product recommendations"],
+    hashtags: ["#parentingtips", "#dayinthelife", "#mumrecommendations"],
+    demographicSummary: "Women 25-39, parent-heavy UK audience.",
+    aiSummary: "High trust creator for mid-funnel confidence building and repeat exposure campaigns.",
     vibeTags: ["Parenting", "Trust-led", "Routine"],
     fitScore: 82,
     conversionLikelihood: "Low",
@@ -569,13 +621,17 @@ export const creators: CreatorRecommendation[] = [
     suggestedIntro: "48 hours in one pair, from nursery drop-off to bedtime.",
     suggestedMessageDirection: "Routine reliability and practical comfort framing.",
     examplePosts: [
-      "https://placehold.co/280x160/F8FAFC/0F172A?text=Day+In+Life",
-      "https://placehold.co/280x160/F1F5F9/0F172A?text=Parenting+Routine"
+      "https://picsum.photos/id/1026/900/600",
+      "https://picsum.photos/id/1028/900/600",
+      "https://picsum.photos/id/1033/900/600",
+      "https://picsum.photos/id/1040/900/600"
     ],
     audienceHighlights: ["Women 25-39", "UK 63%", "Parents 74%"],
     contentStyleTags: ["Vlog format", "Voice notes", "Routine checklists"],
     brandSafetyNotes: ["Very brand-safe content history", "Lower historical conversion intensity"],
     priorCollabs: ["Mamas & Papas", "Mothercare", "Boots"],
+    outreachSize: "1 vlog segment + 2 stories",
+    pricing: "GBP 700-950 package",
     profileUrl: "https://example.com/creator/jules",
     signals: ["High comment trust", "Lower link clicks", "Good retention in day-in-life"]
   }
@@ -595,10 +651,10 @@ export const buildOutreachDrafts = (
     return {
       creatorId: creator.id,
       creatorName: creator.name,
+      suggestedIntro: creator.suggestedIntro,
+      suggestedMessageDirection: creator.suggestedMessageDirection,
       message: [
         intro,
-        `Suggested intro: ${creator.suggestedIntro}`,
-        `Message direction: ${creator.suggestedMessageDirection}`,
         `Deliverables: ${brief.deliverables}`,
         `Timeline: ${brief.timeline}. Usage rights: ${brief.usageRights}.`,
         "If this fits your schedule, we can share final script notes today."

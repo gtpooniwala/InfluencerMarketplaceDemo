@@ -9,7 +9,7 @@ export const CreatorDetails = ({ creator }: CreatorDetailsProps) => {
     return (
       <aside className="demo-card h-fit">
         <h2 className="text-lg font-semibold text-ink">Creator details</h2>
-        <p className="mt-2 text-sm text-slate-600">Pick a creator to inspect audience fit, safety notes, and message direction.</p>
+        <p className="mt-2 text-sm text-slate-600">Pick a creator to inspect audience fit, content previews, pricing, and safety notes.</p>
       </aside>
     );
   }
@@ -18,8 +18,17 @@ export const CreatorDetails = ({ creator }: CreatorDetailsProps) => {
     <aside className="demo-card h-fit space-y-5">
       <div>
         <h2 className="text-lg font-semibold text-ink">{creator.name}</h2>
-        <p className="text-sm text-slate-600">{creator.handle}</p>
+        <p className="text-sm text-slate-600">{creator.handle} · {creator.followerRange}</p>
       </div>
+
+      <section>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Content preview</h3>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          {creator.examplePosts.slice(0, 4).map((image) => (
+            <img key={image} src={image} alt={`${creator.name} post preview`} className="h-24 w-full rounded-lg border border-slate-200 object-cover" />
+          ))}
+        </div>
+      </section>
 
       <section>
         <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Audience fit</h3>
@@ -40,6 +49,18 @@ export const CreatorDetails = ({ creator }: CreatorDetailsProps) => {
               {tag}
             </span>
           ))}
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Partnership scope</h3>
+        <div className="mt-2 grid gap-2 text-sm text-slate-700">
+          <p>
+            <span className="font-semibold text-slate-900">Outreach size:</span> {creator.outreachSize}
+          </p>
+          <p>
+            <span className="font-semibold text-slate-900">Pricing:</span> {creator.pricing}
+          </p>
         </div>
       </section>
 
