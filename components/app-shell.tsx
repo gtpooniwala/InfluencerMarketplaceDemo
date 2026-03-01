@@ -43,7 +43,7 @@ export const AppShell = ({ children }: AppShellProps) => {
         <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
           <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-4">
             <Link href="/" className="text-xl font-semibold tracking-tight text-ink">
-              Influence AI
+              Agora
             </Link>
             <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 md:px-4 md:py-2 md:text-sm">
               Step {progress.step}/6 · {progress.label}
