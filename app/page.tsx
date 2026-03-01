@@ -8,21 +8,21 @@ export default function LandingPage() {
       <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-cyan-100/70 blur-3xl" />
       <div className="absolute -bottom-20 left-10 h-64 w-64 rounded-full bg-emerald-100/70 blur-3xl" />
 
-      <div className="relative flex min-h-[28rem] max-w-4xl flex-col">
-        <div className="space-y-6">
+      <div className="relative mx-auto flex min-h-[28rem] max-w-4xl flex-col items-center">
+        <div className="space-y-6 text-center">
           <p className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
             Agora
           </p>
 
           <h1 className="text-4xl font-semibold tracking-tight text-ink md:text-5xl">
-            Find micro-influencers that actually drive sales.
+            Find influencers that actually drive sales.
           </h1>
 
           <p className="max-w-3xl text-lg text-slate-600">
             From brief to outreach, launch creator campaigns in minutes.
           </p>
 
-          <div className="flex flex-wrap gap-3 pt-1">
+          <div className="flex flex-wrap justify-center gap-3 pt-1">
             <Link href="/brand/onboarding" className="btn-primary px-6 py-3 text-base">
               Create Campaign
             </Link>
@@ -32,7 +32,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="mt-auto pt-8">
+        <div className="mt-auto flex w-full justify-center pt-8">
           <div className="inline-flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2">
             {workflowTabs.map((tab) => (
               <span
