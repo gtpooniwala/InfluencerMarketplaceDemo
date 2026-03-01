@@ -9,7 +9,9 @@ export const CreatorDetails = ({ creator }: CreatorDetailsProps) => {
     return (
       <aside className="demo-card h-fit">
         <h2 className="text-lg font-semibold text-ink">Creator details</h2>
-        <p className="mt-2 text-sm text-slate-600">Pick a creator to inspect audience fit, content previews, pricing, and safety notes.</p>
+        <p className="mt-2 text-sm text-slate-600">
+          Pick a creator to inspect AI fit rationale, audience fit, content previews, pricing, and safety notes.
+        </p>
       </aside>
     );
   }
@@ -20,6 +22,12 @@ export const CreatorDetails = ({ creator }: CreatorDetailsProps) => {
         <h2 className="text-lg font-semibold text-ink">{creator.name}</h2>
         <p className="text-sm text-slate-600">{creator.handle} · {creator.followerRange}</p>
       </div>
+
+      <section className="rounded-xl border border-cyan-200 bg-cyan-50 p-3 text-sm text-cyan-900">
+        <p className="text-xs font-semibold uppercase tracking-wide text-cyan-800">AI fit recommendation</p>
+        <p className="mt-1 font-medium">{creator.whyRelevant}</p>
+        <p className="mt-2 text-cyan-800">{creator.aiSummary}</p>
+      </section>
 
       <section>
         <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Content preview</h3>

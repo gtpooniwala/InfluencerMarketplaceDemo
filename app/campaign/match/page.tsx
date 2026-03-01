@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CreatorDetails } from "@/components/CreatorDetails";
 import { CreatorTile } from "@/components/CreatorTile";
-import { InterpretationBox } from "@/components/InterpretationBox";
 import { OutreachReviewModal } from "@/components/OutreachReviewModal";
 import { useToast } from "@/components/toast-provider";
 import { useDemoFlowStore } from "@/lib/demoFlowStore";
@@ -26,21 +25,6 @@ export default function CampaignMatchPage() {
   const [showOutreachReview, setShowOutreachReview] = useState(false);
 
   const activeCreator = state.creators.find((creator) => creator.id === activeCreatorId) ?? null;
-
-  const matchInterpretation = useMemo(() => {
-    if (!activeCreator) {
-      return [
-        "AI recommendation: start with top-fit creators, then add one creative wildcard for testing.",
-        "Use bulk outreach after selecting 3-4 creators for faster launch."
-      ];
-    }
-
-    return [
-      `Why they are a fit: ${activeCreator.whyRelevant}`,
-      `Campaign fit summary: ${activeCreator.aiSummary}`,
-      `Commercial guide: ${activeCreator.outreachSize} at ${activeCreator.pricing}.`
-    ];
-  }, [activeCreator]);
 
   const openBulkOutreach = () => {
     if (state.selectedCreatorIds.length === 0) {
@@ -141,7 +125,6 @@ export default function CampaignMatchPage() {
 
         <section className="space-y-4">
           <CreatorDetails creator={activeCreator} />
-          <InterpretationBox title="AI recommendation" bullets={matchInterpretation} />
         </section>
       </div>
 
