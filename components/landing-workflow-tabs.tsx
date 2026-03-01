@@ -68,23 +68,7 @@ export const LandingWorkflowTabs = () => {
 
   return (
     <section className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-card md:p-8">
-      <div className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">How Agora Works</p>
-        <h2 className="text-2xl font-semibold tracking-tight text-ink md:text-3xl">{current.title}</h2>
-        <p className="max-w-3xl text-sm text-slate-600 md:text-base">{current.summary}</p>
-      </div>
-
-      <div className="grid gap-3 md:grid-cols-3">
-        {current.bullets.map((item) => (
-          <article key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            {item}
-          </article>
-        ))}
-      </div>
-
-      <div className="rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm font-medium text-cyan-900">{current.highlight}</div>
-
-      <div className="flex flex-wrap justify-center gap-2 border-t border-slate-200 pt-5">
+      <div className="flex flex-wrap justify-center gap-2 border-b border-slate-200 pb-5">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -100,6 +84,22 @@ export const LandingWorkflowTabs = () => {
           </button>
         ))}
       </div>
+
+      <div className="space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">How Agora Works</p>
+        <h2 className="text-2xl font-semibold tracking-tight text-ink md:text-3xl">{current.title}</h2>
+        <p className="max-w-3xl text-sm text-slate-600 md:text-base">{current.summary}</p>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-3">
+        {current.bullets.map((item) => (
+          <article key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+            {item}
+          </article>
+        ))}
+      </div>
+
+      <div className="rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm font-medium text-cyan-900">{current.highlight}</div>
     </section>
   );
 };
