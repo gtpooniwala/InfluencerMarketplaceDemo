@@ -28,14 +28,14 @@ describe("demoFlowStore transitions", () => {
     expect(next.brandBrief?.toneTags.length).toBeGreaterThan(0);
   });
 
-  it("applies sample context and generates brief", () => {
+  it("applies sample context without auto-generating brief", () => {
     const base = createDefaultDemoFlowState();
     const sampled = applySampleContextToState(base);
 
     expect(sampled.intake.contextSources.length).toBeGreaterThan(0);
-    expect(sampled.briefGenerated).toBe(true);
+    expect(sampled.briefGenerated).toBe(false);
 
-    const generated = applyGenerateBriefToState(base);
+    const generated = applyGenerateBriefToState(sampled);
     expect(generated.brief.campaignName.length).toBeGreaterThan(0);
   });
 

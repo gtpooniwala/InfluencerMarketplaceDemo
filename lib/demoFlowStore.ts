@@ -150,7 +150,7 @@ export const applySampleContextToState = (state: DemoFlowState): DemoFlowState =
     ...state,
     intake,
     brief,
-    briefGenerated: true,
+    briefGenerated: false,
     interpretation: buildInterpretation(brief, plan)
   };
 };

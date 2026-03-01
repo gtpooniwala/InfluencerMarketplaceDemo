@@ -34,9 +34,11 @@ export const BriefPanel = ({ brief, generated, onChangeField, onChangeAdvanced }
   return (
     <section className="demo-card space-y-4">
       <div>
-        <h2 className="text-xl font-semibold text-ink">Campaign brief (manual editor)</h2>
+        <h2 className="text-xl font-semibold text-ink">Campaign page</h2>
         <p className="mt-1 text-sm text-slate-600">
-          {generated ? "AI prefilled this brief. Edit anything before planning." : "Choose “Help me create it” above to prefill this section."}
+          {generated
+            ? "AI generated this campaign page from your builder inputs. Edit anything before planning."
+            : "Manual mode: edit this campaign page directly, or use the Campaign Builder above to auto-fill it."}
         </p>
       </div>
 

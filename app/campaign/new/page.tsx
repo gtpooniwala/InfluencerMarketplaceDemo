@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BriefPanel } from "@/components/BriefPanel";
 import { ChatPanel } from "@/components/ChatPanel";
@@ -13,6 +13,7 @@ export default function CampaignNewPage() {
   const { pushToast } = useToast();
   const {
     state,
+    hydrated,
     setChatAnswer,
     addContextSource,
     applySampleContext,
@@ -23,100 +24,116 @@ export default function CampaignNewPage() {
   } = useDemoFlowStore();
 
   const [contextOpen, setContextOpen] = useState(false);
+  const [showCampaignPage, setShowCampaignPage] = useState(false);
 
-  const interpretation = useMemo(() => {
+  useEffect(() => {
+    if (!hydrated) return;
+    if (state.briefGenerated) {
+      setShowCampaignPage(true);
+    }
+  }, [hydrated, state.briefGenerated]);
+
+  const insights = useMemo(() => {
     if (state.interpretation.length > 0) return state.interpretation;
     return [
-      "Pick a launch type, goal, audience, and vibe to generate a first-pass campaign brief.",
-      "You can then edit all brief fields before reviewing the plan."
+      "AI recommendation: define launch type, success metric, audience, and vibe before setting deliverables.",
+      "Campaign quality improves when context files (product pack, meeting notes, social links) are included.",
+      "Once generated, this campaign page becomes your editable source of truth for planning and creator matching."
     ];
   }, [state.interpretation]);
 
+  const handleGenerateCampaignPage = () => {
+    generateBrief();
+    setShowCampaignPage(true);
+    pushToast("Campaign page generated.");
+  };
+
+  const handleViewEditCampaignPage = () => {
+    setShowCampaignPage(true);
+    pushToast("Campaign page opened for manual editing.");
+  };
+
   return (
     <div className="space-y-6">
-      <section className="demo-card space-y-4">
-        <h1 className="text-3xl font-semibold tracking-tight text-ink">Create campaign</h1>
-        <p className="text-sm text-slate-600">
-          Two ways to start: <span className="font-semibold text-slate-900">Help me create it</span> with AI, or edit the manual brief below.
-        </p>
-
-        <div className="grid gap-3 md:grid-cols-2">
-          <button
-            type="button"
-            className="rounded-xl border border-slate-300 bg-slate-900 px-4 py-3 text-left text-white"
-            onClick={() => {
-              generateBrief();
-              pushToast("Campaign brief generated.");
-            }}
-          >
-            <p className="text-sm font-semibold">Help me create it</p>
-            <p className="mt-1 text-xs text-slate-200">Generate and prefill the brief from quick campaign signals.</p>
-          </button>
-          <button
-            type="button"
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-left"
-            onClick={() => pushToast("Manual editing is available below.")}
-          >
-            <p className="text-sm font-semibold text-slate-900">I already know my campaign</p>
-            <p className="mt-1 text-xs text-slate-600">Use the manual editor and keep full control.</p>
-          </button>
-        </div>
-      </section>
-
-      <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <ChatPanel
-          intake={state.intake}
-          onSelect={setChatAnswer}
-          onUseSampleContext={() => {
-            applySampleContext();
-            pushToast("Sample campaign loaded.");
-          }}
-          onUploadContext={(label) => {
-            addContextSource(label);
-            pushToast(`${label} added.`);
-          }}
-          contextOpen={contextOpen}
-          onToggleContextOpen={() => setContextOpen((prev) => !prev)}
-        />
-
-        <div className="space-y-4">
-          <InterpretationBox title="Operator read" bullets={interpretation} />
-          <section className="demo-card">
-            <div className="flex justify-center">
-              <button
-                type="button"
-                className="btn-primary px-6 py-3"
-                onClick={() => {
-                  generateBrief();
-                  pushToast("Campaign brief generated.");
-                }}
-              >
-                Generate campaign brief
-              </button>
+      {!showCampaignPage && (
+        <section className="demo-card space-y-4">
+          <div>
+            <div>
+              <h1 className="text-3xl font-semibold tracking-tight text-ink">Campaign Builder</h1>
+              <p className="mt-2 text-sm text-slate-600">
+                Upload context and let AI build your campaign page, or open the campaign page directly and edit it manually.
+              </p>
             </div>
-          </section>
-        </div>
-      </div>
+          </div>
 
-      <BriefPanel
-        brief={state.brief}
-        generated={state.briefGenerated}
-        onChangeField={updateBriefField}
-        onChangeAdvanced={updateAdvancedBriefField}
-      />
+          <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+            <ChatPanel
+              intake={state.intake}
+              onSelect={setChatAnswer}
+              onUseSampleContext={() => {
+                applySampleContext();
+                pushToast("Sample campaign loaded.");
+              }}
+              onUploadContext={(label) => {
+                addContextSource(label);
+                pushToast(`${label} added.`);
+              }}
+              contextOpen={contextOpen}
+              onToggleContextOpen={() => setContextOpen((prev) => !prev)}
+            />
 
-      <div className="flex justify-center">
-        <button
-          type="button"
-          className="btn-primary px-6 py-3"
-          onClick={() => {
-            generatePlan();
-            router.push("/campaign/plan");
-          }}
-        >
-          Review campaign plan
-        </button>
-      </div>
+            <section className="space-y-4">
+              <section className="demo-card space-y-3">
+                <h2 className="text-lg font-semibold text-ink">Campaign Builder Actions</h2>
+                <p className="text-sm text-slate-600">
+                  Auto-create from uploaded context or jump straight into manual edits.
+                </p>
+
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+                  Context loaded: {state.intake.contextSources.length > 0 ? state.intake.contextSources.join(", ") : "No files yet"}
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-3">
+                  <button type="button" className="btn-primary px-6 py-2.5" onClick={handleGenerateCampaignPage}>
+                    Generate campaign page
+                  </button>
+                  <button type="button" className="btn-secondary px-6 py-2.5" onClick={handleViewEditCampaignPage}>
+                    View / edit campaign page
+                  </button>
+                </div>
+              </section>
+
+              <InterpretationBox title="AI insights" bullets={insights} />
+            </section>
+          </div>
+        </section>
+      )}
+
+      {showCampaignPage && (
+        <>
+          <BriefPanel
+            brief={state.brief}
+            generated={state.briefGenerated}
+            onChangeField={updateBriefField}
+            onChangeAdvanced={updateAdvancedBriefField}
+          />
+
+          <InterpretationBox title="AI insights" bullets={insights} />
+
+          <div className="flex justify-center">
+            <button
+              type="button"
+              className="btn-primary px-6 py-3"
+              onClick={() => {
+                generatePlan();
+                router.push("/campaign/match");
+              }}
+            >
+              Find a Creator
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

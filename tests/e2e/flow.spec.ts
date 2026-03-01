@@ -1,6 +1,9 @@
 import { expect, test } from "@playwright/test";
 
 test("judge click-through: start to campaign dashboard", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.clear();
+  });
   await page.goto("/");
 
   await page.getByRole("link", { name: "Start campaign" }).click();
@@ -12,16 +15,11 @@ test("judge click-through: start to campaign dashboard", async ({ page }) => {
 
   await expect(page).toHaveURL(/\/campaign\/new$/);
   await page.getByRole("button", { name: "Use sample campaign" }).click();
-  await page.getByRole("button", { name: "Generate campaign brief" }).click();
-  await page.getByRole("button", { name: "Review campaign plan" }).click();
-
-  await expect(page).toHaveURL(/\/campaign\/plan$/);
-  await page.getByRole("button", { name: "Show recommended creators" }).click();
+  await page.getByRole("button", { name: "Generate campaign page" }).click();
+  await page.getByRole("button", { name: "Find a Creator" }).click();
 
   await expect(page).toHaveURL(/\/campaign\/match$/);
-  await page.getByRole("button", { name: "Select" }).first().click();
-  await page.getByRole("button", { name: "Select" }).nth(1).click();
-  await page.getByRole("button", { name: "Reach out to selected" }).click();
+  await page.getByRole("button", { name: "Draft outreach" }).first().click();
   await expect(page.getByRole("heading", { name: "Outreach drafts" })).toBeVisible();
   await page.getByRole("button", { name: "Send outreach" }).click();
 
