@@ -4,8 +4,8 @@ import "./globals.css";
 import { AppShell } from "@/components/app-shell";
 
 export const metadata: Metadata = {
-  title: "InfluenceFlow Demo",
-  description: "Frontend-only demo for a micro-influencer marketplace flow"
+  title: "Agora Demo",
+  description: "Vaporware demo flow for micro-influencer campaign operations"
 };
 
 export default function RootLayout({

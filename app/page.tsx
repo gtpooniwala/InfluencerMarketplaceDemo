@@ -1,54 +1,29 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { createEmptyState } from "@/lib/storage";
-import { useDemoState } from "@/lib/useDemoState";
+import Link from "next/link";
 
 export default function LandingPage() {
-  const router = useRouter();
-  const { updateState } = useDemoState();
-
-  const startBrandFlow = () => {
-    router.push("/brand/onboarding");
-  };
-
-  const startDemoFlow = () => {
-    const seeded = createEmptyState();
-    seeded.brandProfile = {
-      companyName: "Northstar Nutrition",
-      website: "https://northstar-demo.com",
-      industry: "Health & Fitness",
-      budgetRange: "$10,000 - $25,000",
-      targetGeo: "United States"
-    };
-    updateState(seeded);
-    router.push("/brand/campaign/new");
-  };
-
   return (
-    <div className="space-y-10">
-      <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-10 shadow-card">
-        <div className="absolute -right-28 -top-28 h-64 w-64 rounded-full bg-cyan-100 blur-3xl" />
-        <div className="absolute -bottom-24 right-20 h-64 w-64 rounded-full bg-blue-100 blur-3xl" />
+    <div className="space-y-8">
+      <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-8 shadow-card md:p-12">
+        <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-orange-100/70 blur-3xl" />
+        <div className="absolute -bottom-24 left-12 h-72 w-72 rounded-full bg-cyan-100/70 blur-3xl" />
 
         <div className="relative max-w-3xl space-y-5">
           <p className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
-            Hackathon Demo · Frontend Only
+            Vaporware Demo
           </p>
           <h1 className="text-4xl font-semibold tracking-tight text-ink md:text-5xl">
-            Micro-influencer campaign flow from onboarding to delivery.
+            Brief to fit-matched micro creators, then outreach and performance in one flow.
           </h1>
           <p className="text-lg text-slate-600">
-            InfluenceFlow demonstrates a full SaaS-like workflow for brands: onboarding, campaign setup, influencer matching,
-            offers, and coordination.
+            Agora helps SME brands turn a campaign brief into explainable creator matches and a clean execution workspace.
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
-            <button onClick={startBrandFlow} className="btn-primary px-6 py-3 text-base">
-              I&apos;m a Brand
-            </button>
-            <button onClick={startDemoFlow} className="btn-secondary px-6 py-3 text-base">
-              View Demo Flow
-            </button>
+            <Link href="/onboarding" className="btn-primary px-6 py-3 text-base">
+              Create campaign
+            </Link>
+            <Link href="/demo" className="btn-secondary px-6 py-3 text-base">
+              View demo
+            </Link>
           </div>
         </div>
       </section>
@@ -56,16 +31,16 @@ export default function LandingPage() {
       <section className="grid gap-4 md:grid-cols-3">
         {[
           {
-            title: "Pre-programmed matching",
-            copy: "Influencers are ranked with deterministic fit scores, reasons, and filters to mimic real discovery."
+            title: "Brief in minutes",
+            copy: "Capture brand tone, campaign objective, and creative constraints without heavy setup."
           },
           {
-            title: "Offer coordination",
-            copy: "Send multi-offers, simulate accept/decline transitions, and keep each relationship organized."
+            title: "Explainable fit",
+            copy: "Rank creators by audience/message/vibe fit, not just keyword overlap."
           },
           {
-            title: "Message + deliverables",
-            copy: "Track every thread and checklist item in one place with in-browser localStorage state."
+            title: "Ops-ready workspace",
+            copy: "Move from shortlist to outreach, contracts, and KPI snapshots in one guided path."
           }
         ].map((item) => (
           <article key={item.title} className="demo-card">
